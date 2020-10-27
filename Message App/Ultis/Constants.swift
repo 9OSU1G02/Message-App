@@ -6,3 +6,6 @@
 //
 
 import Foundation
+
+let SIGN_UP_STORYBOARD_ID = "signupStoryBoardId"
+let FORGOT_PASSWORD_STORYBOARD_ID = "forgotPasswordStoryBoardId"

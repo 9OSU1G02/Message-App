@@ -9,12 +9,14 @@
 /* Begin PBXBuildFile section */
 		B61DF2342547D7190085751E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61DF2332547D7190085751E /* AppDelegate.swift */; };
 		B61DF2362547D7190085751E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61DF2352547D7190085751E /* SceneDelegate.swift */; };
-		B61DF2382547D7190085751E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61DF2372547D7190085751E /* ViewController.swift */; };
+		B61DF2382547D7190085751E /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61DF2372547D7190085751E /* LoginViewController.swift */; };
 		B61DF23B2547D7190085751E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B61DF2392547D7190085751E /* Main.storyboard */; };
 		B61DF23D2547D71B0085751E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B61DF23C2547D71B0085751E /* Assets.xcassets */; };
 		B61DF2402547D71B0085751E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B61DF23E2547D71B0085751E /* LaunchScreen.storyboard */; };
 		B6D1BA7E2547DD0400CECA47 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D1BA7D2547DD0400CECA47 /* Extensions.swift */; };
 		B6D1BA822547DD3C00CECA47 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D1BA812547DD3C00CECA47 /* Constants.swift */; };
+		B6D1BA8C254816D200CECA47 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D1BA8B254816D200CECA47 /* SignUpViewController.swift */; };
+		B6D1BA90254816E300CECA47 /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D1BA8F254816E300CECA47 /* ForgotPasswordViewController.swift */; };
 		D8137593E810E686114E9F62 /* Pods_Message_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D721E4A1CEAD62446018A38 /* Pods_Message_App.framework */; };
 /* End PBXBuildFile section */
 
@@ -25,13 +27,15 @@
 		B61DF2302547D7190085751E /* Message App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Message App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B61DF2332547D7190085751E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B61DF2352547D7190085751E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		B61DF2372547D7190085751E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		B61DF2372547D7190085751E /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		B61DF23A2547D7190085751E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		B61DF23C2547D71B0085751E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B61DF23F2547D71B0085751E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B61DF2412547D71B0085751E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B6D1BA7D2547DD0400CECA47 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		B6D1BA812547DD3C00CECA47 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		B6D1BA8B254816D200CECA47 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
+		B6D1BA8F254816E300CECA47 /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,10 +80,11 @@
 		B61DF2322547D7190085751E /* Message App */ = {
 			isa = PBXGroup;
 			children = (
+				B6D1BA85254805AD00CECA47 /* View */,
 				B6D1BA7C2547DCEC00CECA47 /* Ultis */,
 				B61DF2332547D7190085751E /* AppDelegate.swift */,
 				B61DF2352547D7190085751E /* SceneDelegate.swift */,
-				B61DF2372547D7190085751E /* ViewController.swift */,
+				B6D1BA8A2548166D00CECA47 /* Controller */,
 				B61DF2392547D7190085751E /* Main.storyboard */,
 				B61DF23C2547D71B0085751E /* Assets.xcassets */,
 				B61DF23E2547D71B0085751E /* LaunchScreen.storyboard */,
@@ -95,6 +100,23 @@
 				B6D1BA812547DD3C00CECA47 /* Constants.swift */,
 			);
 			path = Ultis;
+			sourceTree = "<group>";
+		};
+		B6D1BA85254805AD00CECA47 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		B6D1BA8A2548166D00CECA47 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				B61DF2372547D7190085751E /* LoginViewController.swift */,
+				B6D1BA8B254816D200CECA47 /* SignUpViewController.swift */,
+				B6D1BA8F254816E300CECA47 /* ForgotPasswordViewController.swift */,
+			);
+			path = Controller;
 			sourceTree = "<group>";
 		};
 		F3FBC753AD5F61CF27EC1A0B /* Frameworks */ = {
@@ -219,8 +241,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6D1BA8C254816D200CECA47 /* SignUpViewController.swift in Sources */,
+				B6D1BA90254816E300CECA47 /* ForgotPasswordViewController.swift in Sources */,
 				B6D1BA822547DD3C00CECA47 /* Constants.swift in Sources */,
-				B61DF2382547D7190085751E /* ViewController.swift in Sources */,
+				B61DF2382547D7190085751E /* LoginViewController.swift in Sources */,
 				B61DF2342547D7190085751E /* AppDelegate.swift in Sources */,
 				B61DF2362547D7190085751E /* SceneDelegate.swift in Sources */,
 				B6D1BA7E2547DD0400CECA47 /* Extensions.swift in Sources */,
