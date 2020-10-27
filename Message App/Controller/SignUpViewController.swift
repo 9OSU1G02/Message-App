@@ -16,8 +16,8 @@ class SignUpViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        configureUI()
+        
     }
     
     // MARK: - IBActions
@@ -32,5 +32,11 @@ class SignUpViewController: UIViewController {
     
     private func showLoginViewController() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    private func configureUI() {
+        emailTextField.configTextField(leftTextfieldImage: UIImageView(image: #imageLiteral(resourceName: "ic_mail")))
+        passwordTextField.configTextField(leftTextfieldImage: UIImageView(image: #imageLiteral(resourceName: "Key")))
+        repeatPasswordTexiField.configTextField(leftTextfieldImage: UIImageView(image: #imageLiteral(resourceName: "Key")))
     }
 }

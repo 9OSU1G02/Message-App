@@ -15,6 +15,7 @@ class LoginViewController: UIViewController {
     // MARK: - IBOutlet
     @IBOutlet weak var emailTextFiled: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
+    @IBOutlet weak var loginWithGoogleButtonLabel: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,13 +60,18 @@ class LoginViewController: UIViewController {
     }
     
     // MARK: - Configration
+    
     func configureUI() {
         navigationController?.navigationBar.isHidden = true
         navigationController?.navigationBar.barStyle = .black
         emailTextFiled.configTextField(leftTextfieldImage: UIImageView(image: #imageLiteral(resourceName: "ic_mail")))
         passwordTextField.configTextField(leftTextfieldImage: UIImageView(image: #imageLiteral(resourceName: "Key")))
+        
+        let googleIcon = UIImageView(image: #imageLiteral(resourceName: "Google"))
+        googleIcon.setDimensions(height: 22, width: 22)
+        loginWithGoogleButtonLabel.addSubview(googleIcon)
+        googleIcon.centerY(inView: loginWithGoogleButtonLabel)
+        googleIcon.anchor(left: loginWithGoogleButtonLabel.leftAnchor, paddingLeft: 15)
     }
-    
-   
 }
 

@@ -239,6 +239,7 @@
                     <navigationItem key="navigationItem" id="CWK-pe-iXi"/>
                     <connections>
                         <outlet property="emailTextFiled" destination="9M6-bg-RGa" id="ZYn-xJ-npa"/>
+                        <outlet property="loginWithGoogleButtonLabel" destination="W0d-I7-QEC" id="fQK-aY-uX4"/>
                         <outlet property="passwordTextField" destination="794-Mg-F1e" id="6Wq-gK-vNk"/>
                     </connections>
                 </viewController>
