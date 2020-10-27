@@ -36,7 +36,7 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p5X-Aj-lnX">
+                                    <button opaque="NO" alpha="0.29999999999999999" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p5X-Aj-lnX">
                                         <rect key="frame" x="0.0" y="72" width="335" height="50"/>
                                         <color key="backgroundColor" red="0.00056346668860000003" green="0.4425291717" blue="0.87341201310000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
@@ -79,6 +79,7 @@
                     </view>
                     <connections>
                         <outlet property="emailTextField" destination="buw-cD-UW2" id="hTn-G6-c8b"/>
+                        <outlet property="sendLinkButtonTextField" destination="p5X-Aj-lnX" id="9fC-xy-9ZJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LjG-d0-j2t" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -162,7 +163,7 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="GQx-YC-hU5" userLabel="Login Stack View">
                                 <rect key="frame" x="39.666666666666657" y="498" width="335" height="140"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="th6-pV-3Ut">
+                                    <button opaque="NO" alpha="0.29999999999999999" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="th6-pV-3Ut">
                                         <rect key="frame" x="0.0" y="0.0" width="335" height="50"/>
                                         <color key="backgroundColor" red="0.00056346668860000003" green="0.4425291717" blue="0.87341201310000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
@@ -240,6 +241,7 @@
                     <navigationItem key="navigationItem" id="CWK-pe-iXi"/>
                     <connections>
                         <outlet property="emailTextFiled" destination="9M6-bg-RGa" id="ZYn-xJ-npa"/>
+                        <outlet property="loginButtonLabel" destination="th6-pV-3Ut" id="QPY-ly-4Z8"/>
                         <outlet property="loginWithGoogleButtonLabel" destination="W0d-I7-QEC" id="fQK-aY-uX4"/>
                         <outlet property="passwordTextField" destination="794-Mg-F1e" id="6Wq-gK-vNk"/>
                     </connections>
@@ -263,7 +265,7 @@
                                     <constraint firstAttribute="height" constant="110" id="aZD-Wr-Fb5"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hk5-Ic-lAA">
+                            <button opaque="NO" alpha="0.29999999999999999" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hk5-Ic-lAA">
                                 <rect key="frame" x="39.666666666666657" y="474" width="335" height="50"/>
                                 <color key="backgroundColor" red="0.089017800990000007" green="0.65893715620000004" blue="0.48569983239999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
@@ -358,6 +360,7 @@
                         <outlet property="emailTextField" destination="Tyi-DN-EBs" id="hi2-zs-Vma"/>
                         <outlet property="passwordTextField" destination="aCi-9t-Jmn" id="Fkm-3I-qO5"/>
                         <outlet property="repeatPasswordTexiField" destination="Khb-yX-gJd" id="mjL-W7-Yes"/>
+                        <outlet property="signUpButtonLabel" destination="hk5-Ic-lAA" id="4SR-Ji-hPz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="D9T-t1-n7V" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

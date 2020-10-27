@@ -17,6 +17,7 @@
 		B6D1BA822547DD3C00CECA47 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D1BA812547DD3C00CECA47 /* Constants.swift */; };
 		B6D1BA8C254816D200CECA47 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D1BA8B254816D200CECA47 /* SignUpViewController.swift */; };
 		B6D1BA90254816E300CECA47 /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D1BA8F254816E300CECA47 /* ForgotPasswordViewController.swift */; };
+		B6D3EB202548665D00EEF95E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B6D3EB1F2548665D00EEF95E /* GoogleService-Info.plist */; };
 		D8137593E810E686114E9F62 /* Pods_Message_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D721E4A1CEAD62446018A38 /* Pods_Message_App.framework */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +37,7 @@
 		B6D1BA812547DD3C00CECA47 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B6D1BA8B254816D200CECA47 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		B6D1BA8F254816E300CECA47 /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
+		B6D3EB1F2548665D00EEF95E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,7 +82,6 @@
 		B61DF2322547D7190085751E /* Message App */ = {
 			isa = PBXGroup;
 			children = (
-				B6D1BA85254805AD00CECA47 /* View */,
 				B6D1BA7C2547DCEC00CECA47 /* Ultis */,
 				B61DF2332547D7190085751E /* AppDelegate.swift */,
 				B61DF2352547D7190085751E /* SceneDelegate.swift */,
@@ -89,6 +90,7 @@
 				B61DF23C2547D71B0085751E /* Assets.xcassets */,
 				B61DF23E2547D71B0085751E /* LaunchScreen.storyboard */,
 				B61DF2412547D71B0085751E /* Info.plist */,
+				B6D3EB1F2548665D00EEF95E /* GoogleService-Info.plist */,
 			);
 			path = "Message App";
 			sourceTree = "<group>";
@@ -100,13 +102,6 @@
 				B6D1BA812547DD3C00CECA47 /* Constants.swift */,
 			);
 			path = Ultis;
-			sourceTree = "<group>";
-		};
-		B6D1BA85254805AD00CECA47 /* View */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = View;
 			sourceTree = "<group>";
 		};
 		B6D1BA8A2548166D00CECA47 /* Controller */ = {
@@ -187,6 +182,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B61DF2402547D71B0085751E /* LaunchScreen.storyboard in Resources */,
+				B6D3EB202548665D00EEF95E /* GoogleService-Info.plist in Resources */,
 				B61DF23D2547D71B0085751E /* Assets.xcassets in Resources */,
 				B61DF23B2547D7190085751E /* Main.storyboard in Resources */,
 			);

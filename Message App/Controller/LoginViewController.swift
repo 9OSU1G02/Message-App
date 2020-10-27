@@ -7,6 +7,12 @@
 
 import UIKit
 import Foundation
+import ProgressHUD
+
+protocol AuthenticationFormCheck {
+    func checkFormIsValid() -> Bool
+    func updateForm(formIsValid: Bool)
+}
 class LoginViewController: UIViewController {
     // MARK: - Properties
     
@@ -16,12 +22,13 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var emailTextFiled: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginWithGoogleButtonLabel: UIButton!
+    @IBOutlet weak var loginButtonLabel: UIButton!
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
-        
+        configureNotificationObservers()
     }
     
     // MARK: - IBActions
@@ -36,16 +43,17 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func loginButtonPressed(_ sender: UIButton) {
-        
     }
     
     @IBAction func loginWithGoogleButtonPressed(_ sender: UIButton) {
-
+        
     }
     
     @IBAction func dontHaveAccountButtonPressed(_ sender: Any) {
         showSignUpViewController()
     }
+    
+    
     
     
     // MARK: - Navigation
@@ -59,8 +67,19 @@ class LoginViewController: UIViewController {
         let forgotPasswordVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(identifier: FORGOT_PASSWORD_STORYBOARD_ID)
         navigationController?.pushViewController(forgotPasswordVC, animated: true)
     }
+        
+    // MARK: - Selections
+    @objc func textDidChange(_ sender: UITextField) {
+        let formIsValid = checkFormIsValid()
+        updateForm(formIsValid: formIsValid)
+    }
     
     // MARK: - Configration
+    
+    func configureNotificationObservers() {
+        emailTextFiled.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
+        passwordTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
+    }
     
     func configureUI() {
         navigationController?.navigationBar.isHidden = true
@@ -79,3 +98,21 @@ class LoginViewController: UIViewController {
     
 }
 
+// MARK: - Extension
+
+extension LoginViewController: AuthenticationFormCheck {
+    func updateForm(formIsValid: Bool) {
+        if formIsValid {
+            loginButtonLabel.alpha = 1
+            loginButtonLabel.isEnabled = true
+        }
+        else {
+            loginButtonLabel.alpha = 0.3
+            loginButtonLabel.isEnabled = false
+        }
+    }
+            
+    func checkFormIsValid() -> Bool {
+        return emailTextFiled.text != "" && passwordTextField.text != ""
+    }
+}

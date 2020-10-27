@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import ProgressHUD
 extension UIView {
     func anchor(top: NSLayoutYAxisAnchor? = nil,
                 left: NSLayoutXAxisAnchor? = nil,
@@ -113,4 +114,11 @@ extension UITextField {
         //placeholder text color
         attributedPlaceholder = NSAttributedString(string: placeholder!, attributes: [.foregroundColor : UIColor(white: 1, alpha: 0.5)])
     }
+}
+
+extension UIViewController {
+   
+    
+    
+    
 }
