@@ -108,9 +108,8 @@ extension UITextField {
         leftImage.anchor(left: leftView?.leftAnchor,paddingLeft: 10)
         //allwas display no matter what
         leftViewMode = .always
-                           
-        
-        
+        backgroundColor = UIColor(white: 1, alpha: 0.05)
+        keyboardAppearance = .dark
         //placeholder text color
         attributedPlaceholder = NSAttributedString(string: placeholder!, attributes: [.foregroundColor : UIColor(white: 1, alpha: 0.5)])
     }
