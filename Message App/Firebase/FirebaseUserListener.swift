@@ -32,7 +32,7 @@ class FirebaseUserListener {
                 }
             }
             //Create user and save it to firestore
-            let user = User(id: result.user.uid, username: email, email: email, status: "Available", avataLink: "", hasSeenOnboard: false)
+            let user = User(id: result.user.uid, username: email, email: email, status: "Available", avatarLink: "", hasSeenOnboard: false)
             self.saveUserToFirestore(user)
         }
     }
@@ -55,8 +55,21 @@ class FirebaseUserListener {
                 return
             }
             //Email is verified
-            FirebaseUserListener.shared.downLoadUserFromFirestore(userId: result.user.uid, email: email)
+            FirebaseUserListener.shared.downLoadUserFromFirestore(userId: result.user.uid)
             completion(error,true)
+        }
+    }
+    
+    // MARK: - Logout
+        
+    func logOut(completion: @escaping (_ error: Error?) -> Void) {
+        do {
+            try Auth.auth().signOut()
+            USER_DEFAULT.removeObject(forKey: CURRENT_USER)
+            completion(nil)
+        }
+        catch{
+            completion(error)
         }
     }
     
@@ -78,8 +91,9 @@ class FirebaseUserListener {
                 return
             }
             if let username = result.user.displayName, let email = result.user.email {
-                let user = User(id: result.user.uid, username: username, email: email, status: "Available", avataLink: "", hasSeenOnboard: false)
+                let user = User(id: result.user.uid, username: username, email: email, status: "Available", avatarLink: "", hasSeenOnboard: false)
                 self.saveUserToFirestore(user)
+                saveUserLocally(user)
             }
             else {
                 ProgressHUD.showError("Can't get information from your google account")
@@ -89,7 +103,7 @@ class FirebaseUserListener {
         }
     }
     
-    func downLoadUserFromFirestore(userId: String, email: String) {
+    func downLoadUserFromFirestore(userId: String) {
         FirebaseReference(.User).document(userId).getDocument { (snapshot, error) in
             guard let document = snapshot else {
                 print("No document for user")
@@ -102,7 +116,7 @@ class FirebaseUserListener {
             switch result {
             case .success(let user):
                 if let user = user {
-                    self.saveUserLocally(user)
+                    saveUserLocally(user)
                 }
                 else {
                     ProgressHUD.showFailed("User does not exits")
@@ -123,13 +137,6 @@ class FirebaseUserListener {
         }
     }
     
-    func saveUserLocally(_ user: User) {
-        let encoder = JSONEncoder()
-        do {
-            let data = try encoder.encode(user)
-            UserDefaults.standard.set(data,forKey: CURRENT_USER)
-        } catch {
-            print("Can't save user to userDefaults")
-        }
-    }
+    //Encode user to JSON then save to UserDefault
+    
 }

@@ -55,7 +55,8 @@ class LoginViewController: UIViewController {
                 }
                 else {
                     if isEmailVerified {
-                        print("go to app")
+                        // TODO: - Go to main view
+                        self.goToMainView()
                     }
                     else {
                         ProgressHUD.showFailed("Please verify email")
@@ -124,9 +125,7 @@ class LoginViewController: UIViewController {
     }
     
     // MARK: - Configration
-    
-        
-    
+                
     func configureNotificationObservers() {
         emailTextFiled.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
         passwordTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
@@ -138,7 +137,6 @@ class LoginViewController: UIViewController {
         
         emailTextFiled.configTextField(leftTextfieldImage: UIImageView(image: #imageLiteral(resourceName: "ic_mail")))
         passwordTextField.configTextField(leftTextfieldImage: UIImageView(image: #imageLiteral(resourceName: "Key")))
-        passwordTextField.clearsOnBeginEditing = false
         
         let googleIcon = UIImageView(image: #imageLiteral(resourceName: "Google"))
         googleIcon.setDimensions(height: 22, width: 22)
@@ -147,6 +145,13 @@ class LoginViewController: UIViewController {
         googleIcon.anchor(left: loginWithGoogleButtonLabel.leftAnchor, paddingLeft: 15)
     }
     
+    
+    // MARK: - Navigation
+    private func goToMainView() {
+        let mainView = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: MAIN_VIEW_STORYBOARD_ID) as! UITabBarController
+        mainView.modalPresentationStyle = .fullScreen
+        present(mainView, animated: true, completion: nil)
+    }
 }
 
 // MARK: - Extension
@@ -181,7 +186,8 @@ extension LoginViewController: GIDSignInDelegate {
                 ProgressHUD.showError(error.localizedDescription)
                 return
             }
-            // TODO: - Go to main app
+            // TODO: - Go to main view
+            self.goToMainView()
         }
     }
 }

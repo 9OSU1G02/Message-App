@@ -6,17 +6,19 @@
 //
 
 import UIKit
-
+import Firebase
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    //Listening if there are any changes in our loggin user
+    var authListener: AuthStateDidChangeListenerHandle?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
+        self.autoLogin()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -46,7 +48,28 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
-
+    
+    // MARK: - AutoLogin
+    func autoLogin() {
+        //Listenting for authenticcation (log in,log out ...)
+        authListener = Auth.auth().addStateDidChangeListener({ (auth, user) in
+            if let authListener = self.authListener {
+                //When user logged in we to remove these listner because there is no need to keep listening for changes agains
+                Auth.auth().removeStateDidChangeListener(authListener)
+                //If has logged in user and also have user in UserDefault it means that we do have a logged in user -> Present MainView
+                if user != nil && USER_DEFAULT.object(forKey: CURRENT_USER) != nil {
+                    DispatchQueue.main.async {
+                        self.goToMainView()
+                    }
+                }
+            }
+        })
+    }
+    
+    private func goToMainView() {
+        let mainView = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(identifier: MAIN_VIEW_STORYBOARD_ID) as! UITabBarController
+        window?.rootViewController = mainView
+    }
 
 }
 
