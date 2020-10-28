@@ -216,6 +216,13 @@
                                     <action selector="textEntrySecurityButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="pLK-Iz-ti7"/>
                                 </connections>
                             </button>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SSz-sm-2pw">
+                                <rect key="frame" x="39.666666666666657" y="413" width="88" height="30"/>
+                                <state key="normal" title="Resent Email"/>
+                                <connections>
+                                    <action selector="resentEmailButtonPress:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2Hq-Md-eiS"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" red="0.12812247869999999" green="0.1424534023" blue="0.16552463170000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -223,6 +230,7 @@
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="OYd-ex-NQI" secondAttribute="bottom" id="7av-oD-Alx"/>
                             <constraint firstItem="794-Mg-F1e" firstAttribute="top" secondItem="9M6-bg-RGa" secondAttribute="bottom" constant="20" id="DVd-4t-hrN"/>
                             <constraint firstItem="Na3-TC-LIS" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="30" id="P6Z-hT-Wvs"/>
+                            <constraint firstItem="SSz-sm-2pw" firstAttribute="centerY" secondItem="acg-mn-OxP" secondAttribute="centerY" id="QPl-aI-igo"/>
                             <constraint firstItem="GQx-YC-hU5" firstAttribute="top" secondItem="acg-mn-OxP" secondAttribute="bottom" constant="60" id="U7Y-hS-buN"/>
                             <constraint firstItem="acg-mn-OxP" firstAttribute="top" secondItem="zR8-pR-7iT" secondAttribute="bottom" constant="35" id="V5J-zF-gLD"/>
                             <constraint firstItem="acg-mn-OxP" firstAttribute="top" secondItem="794-Mg-F1e" secondAttribute="bottom" constant="20" id="XSu-Uf-ZnE"/>
@@ -230,6 +238,7 @@
                             <constraint firstItem="OYd-ex-NQI" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="bQ8-h1-VCC"/>
                             <constraint firstItem="Na3-TC-LIS" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="cbQ-cn-han"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="acg-mn-OxP" secondAttribute="trailing" constant="39.5" id="csE-WQ-2fl"/>
+                            <constraint firstItem="SSz-sm-2pw" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="39.670000000000002" id="der-dr-xfG"/>
                             <constraint firstItem="9M6-bg-RGa" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="hny-Z2-wc9"/>
                             <constraint firstItem="794-Mg-F1e" firstAttribute="width" secondItem="9M6-bg-RGa" secondAttribute="width" id="loE-SA-0hl"/>
                             <constraint firstItem="zR8-pR-7iT" firstAttribute="top" secondItem="9M6-bg-RGa" secondAttribute="bottom" constant="35" id="pMT-EG-KOL"/>
@@ -244,6 +253,7 @@
                         <outlet property="loginButtonLabel" destination="th6-pV-3Ut" id="QPY-ly-4Z8"/>
                         <outlet property="loginWithGoogleButtonLabel" destination="W0d-I7-QEC" id="fQK-aY-uX4"/>
                         <outlet property="passwordTextField" destination="794-Mg-F1e" id="6Wq-gK-vNk"/>
+                        <outlet property="resentEmailButtonLabel" destination="SSz-sm-2pw" id="AwM-wr-inU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

@@ -8,6 +8,8 @@
 import UIKit
 import Foundation
 import ProgressHUD
+import Firebase
+import GoogleSignIn
 
 protocol AuthenticationFormCheck {
     func checkFormIsValid() -> Bool
@@ -23,12 +25,15 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginWithGoogleButtonLabel: UIButton!
     @IBOutlet weak var loginButtonLabel: UIButton!
+    @IBOutlet weak var resentEmailButtonLabel: UIButton!
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
         configureNotificationObservers()
+        setupBackgroundTap()
+        configureGoogleSignIN()
     }
     
     // MARK: - IBActions
@@ -43,17 +48,61 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func loginButtonPressed(_ sender: UIButton) {
+        if let email = emailTextFiled.text, let password = passwordTextField.text {
+            FirebaseUserListener.shared.loginUserWith(email: email, password: password) { (error, isEmailVerified) in
+                if let error = error {
+                    ProgressHUD.showFailed(error.localizedDescription)
+                }
+                else {
+                    if isEmailVerified {
+                        print("go to app")
+                    }
+                    else {
+                        ProgressHUD.showFailed("Please verify email")
+                        self.resentEmailButtonLabel.isHidden = false
+                    }
+                }
+            }
+        }
+        
     }
     
     @IBAction func loginWithGoogleButtonPressed(_ sender: UIButton) {
-        
+        handleGoogleLogin()
     }
     
     @IBAction func dontHaveAccountButtonPressed(_ sender: Any) {
         showSignUpViewController()
     }
     
+    @IBAction func resentEmailButtonPress(_ sender: UIButton) {
+        if let email = emailTextFiled.text {
+            FirebaseUserListener.shared.reSendEmailVerification(email: email) { (error) in
+                if let error = error {
+                    ProgressHUD.showError(error.localizedDescription)
+                }
+                else {
+                    ProgressHUD.showSuccess("Email Verified Link was send")
+                }
+            }
+        }
+    }
     
+    
+    // MARK: - Google Login
+    
+    func configureGoogleSignIN() {
+        //The object to be notified when authentication is finished.
+        GIDSignIn.sharedInstance().delegate = self
+    }
+    
+    func handleGoogleLogin() {
+        //The view controller used to present `SFSafariViewContoller`
+        GIDSignIn.sharedInstance()?.presentingViewController = self
+        
+        //perform sign in when click on Login with google
+        GIDSignIn.sharedInstance()?.signIn()
+    }
     
     
     // MARK: - Navigation
@@ -75,6 +124,8 @@ class LoginViewController: UIViewController {
     }
     
     // MARK: - Configration
+    
+        
     
     func configureNotificationObservers() {
         emailTextFiled.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
@@ -105,14 +156,32 @@ extension LoginViewController: AuthenticationFormCheck {
         if formIsValid {
             loginButtonLabel.alpha = 1
             loginButtonLabel.isEnabled = true
+            
         }
         else {
             loginButtonLabel.alpha = 0.3
             loginButtonLabel.isEnabled = false
+            resentEmailButtonLabel.isHidden = true
         }
     }
             
     func checkFormIsValid() -> Bool {
         return emailTextFiled.text != "" && passwordTextField.text != ""
+    }
+}
+
+extension LoginViewController: GIDSignInDelegate {
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        //Happen when user choose cancel
+        if user == nil {
+            return
+        }
+        FirebaseUserListener.shared.signInWithGoogle(signIn, didSignInFor: user, withError: error) { (error) in
+            if let error = error {
+                ProgressHUD.showError(error.localizedDescription)
+                return
+            }
+            // TODO: - Go to main app
+        }
     }
 }

@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import ProgressHUD
 class SignUpViewController: UIViewController {
     // MARK: - IBOutlets
     
@@ -19,11 +19,27 @@ class SignUpViewController: UIViewController {
         super.viewDidLoad()
         configureUI()
         configureNotificationObservers()
+        setupBackgroundTap()
     }
     
     // MARK: - IBActions
     
     @IBAction func signUpButtonPressed(_ sender: UIButton) {
+        if let email = emailTextField.text, let password = passwordTextField.text, let repeatPassword = repeatPasswordTexiField.text {
+            if password == repeatPassword {
+                FirebaseUserListener.shared.registerUserWith(email: email, password: password) { (error) in
+                    if let error = error {
+                        ProgressHUD.showError(error.localizedDescription)
+                    }
+                    else {
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                }
+            }
+            else {
+                ProgressHUD.showError("Password not match")
+            }
+        }
         
     }
     

@@ -117,8 +117,14 @@ extension UITextField {
 }
 
 extension UIViewController {
-   
     
-    
+    func setupBackgroundTap() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(backgroundTap))
+        view.addGestureRecognizer(tapGesture)
+    }
+    @objc func backgroundTap() {
+        //Disable all keyboard for any view that has currently called the keyboard
+        view.endEditing(false)
+    }
     
 }

@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import ProgressHUD
 class ForgotPasswordViewController: UIViewController {
     // MARK: - IBOutlet
     
@@ -16,12 +16,22 @@ class ForgotPasswordViewController: UIViewController {
         super.viewDidLoad()
         configureNotificationObservers()
         configureUI()
+        setupBackgroundTap()
     }
     
     // MARK: - IBActions
    
     @IBAction func sendLinkButtonPressed(_ sender: UIButton) {
-        
+        if let email = emailTextField.text {
+            FirebaseUserListener.shared.resetPasswordFor(email: email) { (error) in
+                if let error = error {
+                    ProgressHUD.showError(error.localizedDescription)
+                }
+                else {
+                    ProgressHUD.showSuccess("Reset Password Link was send to your email")
+                }
+            }
+        }
     }
     
     @IBAction func backButtonPressed(_ sender: UIButton) {
@@ -47,6 +57,7 @@ extension ForgotPasswordViewController: AuthenticationFormCheck {
         if formIsValid {
             sendLinkButtonTextField.alpha = 1
             sendLinkButtonTextField.isEnabled = true
+            
         }
         else {
             sendLinkButtonTextField.alpha = 0.3
