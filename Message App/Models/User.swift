@@ -34,6 +34,11 @@ struct User: Codable, Equatable {
         }
         return nil
     }
+    
+    //User for when need COMPARE 2 User
+    static func == (lhs: User, rhs: User) -> Bool {
+        return lhs.id == rhs.id
+    }
 }
     
 func saveUserLocally(_ user: User) {
@@ -43,5 +48,18 @@ func saveUserLocally(_ user: User) {
         USER_DEFAULT.set(data,forKey: CURRENT_USER)
     } catch {
         print("Can't save user to userDefaults")
+    }
+}
+
+func createDummyUsers() {
+    print("Creteating dummy user")
+    let names = ["Huy","Hung","Dung","Huong","Duong"]
+    for i in 0..<5 {
+        let id = UUID().uuidString
+        let fileDictory = "Avatars/" + "_\(id)" + ".jgp"
+        FileStorage.uploadImage(UIImage(named: "user\(i)")!, directory: fileDictory) { (avatarLink) in
+            let user = User(id: id, username: names[i], email: "user\(i)@gmail.com", status: "Available", avatarLink: avatarLink!)
+                FirebaseUserListener.shared.saveUserToFirestore(user)
+        }
     }
 }

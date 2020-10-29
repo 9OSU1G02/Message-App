@@ -81,7 +81,7 @@ class EditProfileTableViewController: UITableViewController {
         }
     }
     
-    // MARK: - TableView DataSource
+    // MARK: - TableView DataSource & delegate
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         //If not first section -> set heigh = 10
         return section == 0 ? 0 : 10

@@ -44,17 +44,18 @@ class FileStorage {
     
     class func downloadImage(imageUrl: String, competion: @escaping (_ image: UIImage?) -> Void) {
         let imageFileName = fileNameFrom(fileUrl: imageUrl)
+        #warning("bug ather user will not get latest avatar of current user because avatar file name == user id --> locally alwasy have avatar")
         //If image in locally then don't have to download from Firebase
-        if fileExistAtPath(path: imageFileName) {
-            // get data locally and convert to UIImage
-            if let contentOfFile = UIImage(contentsOfFile: fileInDocumentsDicrectory(fileName: imageFileName)) {
-                competion(contentOfFile)
-            }
-            else {
-                competion(UIImage(named: "Messenger"))
-            }
-        }
-        else {
+//        if fileExistAtPath(path: imageFileName) {
+//            // get data locally and convert to UIImage
+//            if let contentOfFile = UIImage(contentsOfFile: fileInDocumentsDicrectory(fileName: imageFileName)) {
+//                competion(contentOfFile)
+//            }
+//            else {
+//                competion(UIImage(named: "Messenger"))
+//            }
+//        }
+//        else {
             // download from FB
                 if imageUrl != "" {
                 let documentURL = URL(string: imageUrl)
@@ -76,7 +77,7 @@ class FileStorage {
                     }
                 }
             }
-        }
+        //}
     }
     
     // MARK:  Save Locally

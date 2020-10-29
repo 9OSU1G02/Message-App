@@ -103,6 +103,8 @@ class FirebaseUserListener {
         }
     }
     
+    // MARK: - Download User
+    
     func downLoadUserFromFirestore(userId: String) {
         FirebaseReference(.User).document(userId).getDocument { (snapshot, error) in
             guard let document = snapshot else {
@@ -124,6 +126,50 @@ class FirebaseUserListener {
             case .failure(let error):
                 print("Error decoding user", error)
             }
+        }
+    }
+    
+    //Return Users with specified id
+    func downloadUsersFromFireBase(withIds: [String], completion: @escaping (_ allUsers: [User] )-> Void) {
+        var count = 0
+        var userArray: [User] = []
+        
+        for userId in withIds {
+            FirebaseReference(.User).document(userId).getDocument { (snapshot, error) in
+                guard let document = snapshot else {
+                    print("No document for user")
+                    return
+                }
+                //Create User from document
+                let user = try? document.data(as: User.self)
+                userArray.append(user!)
+                count += 1
+                //When get all user ( count 5 == witdIds.count =5 )
+                if count == withIds.count {
+                    completion(userArray)
+                }
+            }
+        }
+    }
+    
+    func downloadAllUserFromFireBase(completion: @escaping (_ allUsers: [User] )-> Void) {
+        var users : [User] = []
+        FirebaseReference(.User).getDocuments { (snapshot, error) in
+            guard let document = snapshot?.documents else {
+                print("No document in all Users")
+                return
+            }
+            //Decode [QueryDocumentSnapshot] -> [User]
+            let allUsers = document.compactMap { (queryDocumentSnapshot) -> User? in
+                return try? queryDocumentSnapshot.data(as: User.self)
+            }
+            for user in allUsers {
+                //Don't want append current user
+                if User.currentId != user.id {
+                    users.append(user)
+                }
+            }
+            completion(users)
         }
     }
     

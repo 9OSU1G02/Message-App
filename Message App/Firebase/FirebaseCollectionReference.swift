@@ -10,6 +10,7 @@ import FirebaseFirestore
 
 enum FirebaseCollectionReference: String {
     case User
+    case Recent
 }
 
 func FirebaseReference(_ collectionReference: FirebaseCollectionReference) -> CollectionReference {

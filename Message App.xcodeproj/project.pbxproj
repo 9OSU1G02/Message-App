@@ -13,6 +13,12 @@
 		B61DF23B2547D7190085751E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B61DF2392547D7190085751E /* Main.storyboard */; };
 		B61DF23D2547D71B0085751E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B61DF23C2547D71B0085751E /* Assets.xcassets */; };
 		B61DF2402547D71B0085751E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B61DF23E2547D71B0085751E /* LaunchScreen.storyboard */; };
+		B6C6A1F9254A9D2D009368F8 /* UserProfileTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C6A1F8254A9D2D009368F8 /* UserProfileTableViewController.swift */; };
+		B6C6A1FF254AA49E009368F8 /* RecentChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C6A1FE254AA49E009368F8 /* RecentChat.swift */; };
+		B6C6A202254AA51C009368F8 /* FirebaseRecentListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C6A201254AA51B009368F8 /* FirebaseRecentListener.swift */; };
+		B6C6A205254AA92D009368F8 /* RecentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C6A204254AA92D009368F8 /* RecentTableViewCell.swift */; };
+		B6C6A208254AB288009368F8 /* StartChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C6A207254AB288009368F8 /* StartChat.swift */; };
+		B6C8ED77254A88A000BB0361 /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C8ED76254A88A000BB0361 /* UserTableViewCell.swift */; };
 		B6CC0F212549BB5C00CE1E07 /* FirebaseStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CC0F202549BB5C00CE1E07 /* FirebaseStorage.swift */; };
 		B6CC0F252549BF6100CE1E07 /* GlobalFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CC0F242549BF6100CE1E07 /* GlobalFunction.swift */; };
 		B6CC0F282549C77300CE1E07 /* EditProfileTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CC0F272549C77300CE1E07 /* EditProfileTableViewController.swift */; };
@@ -43,6 +49,12 @@
 		B61DF23C2547D71B0085751E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B61DF23F2547D71B0085751E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B61DF2412547D71B0085751E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B6C6A1F8254A9D2D009368F8 /* UserProfileTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileTableViewController.swift; sourceTree = "<group>"; };
+		B6C6A1FE254AA49E009368F8 /* RecentChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentChat.swift; sourceTree = "<group>"; };
+		B6C6A201254AA51B009368F8 /* FirebaseRecentListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseRecentListener.swift; sourceTree = "<group>"; };
+		B6C6A204254AA92D009368F8 /* RecentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentTableViewCell.swift; sourceTree = "<group>"; };
+		B6C6A207254AB288009368F8 /* StartChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartChat.swift; sourceTree = "<group>"; };
+		B6C8ED76254A88A000BB0361 /* UserTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
 		B6CC0F202549BB5C00CE1E07 /* FirebaseStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseStorage.swift; sourceTree = "<group>"; };
 		B6CC0F242549BF6100CE1E07 /* GlobalFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalFunction.swift; sourceTree = "<group>"; };
 		B6CC0F272549C77300CE1E07 /* EditProfileTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileTableViewController.swift; sourceTree = "<group>"; };
@@ -102,6 +114,7 @@
 		B61DF2322547D7190085751E /* Message App */ = {
 			isa = PBXGroup;
 			children = (
+				B6C8ED75254A887F00BB0361 /* Custom Cell */,
 				B6D3EB562548884000EEF95E /* Models */,
 				B6D1BA7C2547DCEC00CECA47 /* Ultis */,
 				B6D1BA8A2548166D00CECA47 /* Controller */,
@@ -117,6 +130,15 @@
 			path = "Message App";
 			sourceTree = "<group>";
 		};
+		B6C8ED75254A887F00BB0361 /* Custom Cell */ = {
+			isa = PBXGroup;
+			children = (
+				B6C8ED76254A88A000BB0361 /* UserTableViewCell.swift */,
+				B6C6A204254AA92D009368F8 /* RecentTableViewCell.swift */,
+			);
+			path = "Custom Cell";
+			sourceTree = "<group>";
+		};
 		B6D1229E2549852F00E1ABB8 /* Authentication ViewController */ = {
 			isa = PBXGroup;
 			children = (
@@ -130,11 +152,12 @@
 		B6D122A02549853F00E1ABB8 /* Main ViewController */ = {
 			isa = PBXGroup;
 			children = (
-				B6D122A1254985EA00E1ABB8 /* UserTableViewController.swift */,
 				B6D122A52549860200E1ABB8 /* ChannelTableViewController.swift */,
 				B6D122AB2549865300E1ABB8 /* ChatTableViewController.swift */,
 				B6D122A82549861800E1ABB8 /* SettingsTableViewController.swift */,
 				B6CC0F272549C77300CE1E07 /* EditProfileTableViewController.swift */,
+				B6D122A1254985EA00E1ABB8 /* UserTableViewController.swift */,
+				B6C6A1F8254A9D2D009368F8 /* UserProfileTableViewController.swift */,
 			);
 			path = "Main ViewController";
 			sourceTree = "<group>";
@@ -145,6 +168,7 @@
 				B6D1BA7D2547DD0400CECA47 /* Extensions.swift */,
 				B6D1BA812547DD3C00CECA47 /* Constants.swift */,
 				B6CC0F242549BF6100CE1E07 /* GlobalFunction.swift */,
+				B6C6A207254AB288009368F8 /* StartChat.swift */,
 			);
 			path = Ultis;
 			sourceTree = "<group>";
@@ -164,6 +188,7 @@
 				B6D3EB4C2548855600EEF95E /* FirebaseCollectionReference.swift */,
 				B6D3EB52254885CA00EEF95E /* FirebaseUserListener.swift */,
 				B6CC0F202549BB5C00CE1E07 /* FirebaseStorage.swift */,
+				B6C6A201254AA51B009368F8 /* FirebaseRecentListener.swift */,
 			);
 			path = Firebase;
 			sourceTree = "<group>";
@@ -172,6 +197,7 @@
 			isa = PBXGroup;
 			children = (
 				B6D3EB572548887E00EEF95E /* User.swift */,
+				B6C6A1FE254AA49E009368F8 /* RecentChat.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -317,21 +343,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6C6A1FF254AA49E009368F8 /* RecentChat.swift in Sources */,
 				B6D3EB4D2548855600EEF95E /* FirebaseCollectionReference.swift in Sources */,
 				B6D122A92549861800E1ABB8 /* SettingsTableViewController.swift in Sources */,
+				B6C6A202254AA51C009368F8 /* FirebaseRecentListener.swift in Sources */,
 				B6D1BA8C254816D200CECA47 /* SignUpViewController.swift in Sources */,
 				B6D122A62549860200E1ABB8 /* ChannelTableViewController.swift in Sources */,
+				B6C6A205254AA92D009368F8 /* RecentTableViewCell.swift in Sources */,
 				B6D1BA90254816E300CECA47 /* ForgotPasswordViewController.swift in Sources */,
 				B6D3EB53254885CA00EEF95E /* FirebaseUserListener.swift in Sources */,
 				B6CC0F252549BF6100CE1E07 /* GlobalFunction.swift in Sources */,
 				B6D1BA822547DD3C00CECA47 /* Constants.swift in Sources */,
 				B61DF2382547D7190085751E /* LoginViewController.swift in Sources */,
 				B61DF2342547D7190085751E /* AppDelegate.swift in Sources */,
+				B6C6A1F9254A9D2D009368F8 /* UserProfileTableViewController.swift in Sources */,
+				B6C8ED77254A88A000BB0361 /* UserTableViewCell.swift in Sources */,
 				B61DF2362547D7190085751E /* SceneDelegate.swift in Sources */,
 				B6CC0F212549BB5C00CE1E07 /* FirebaseStorage.swift in Sources */,
 				B6CC0F282549C77300CE1E07 /* EditProfileTableViewController.swift in Sources */,
 				B6D122A2254985EA00E1ABB8 /* UserTableViewController.swift in Sources */,
 				B6D3EB582548887E00EEF95E /* User.swift in Sources */,
+				B6C6A208254AB288009368F8 /* StartChat.swift in Sources */,
 				B6D1BA7E2547DD0400CECA47 /* Extensions.swift in Sources */,
 				B6D122AC2549865300E1ABB8 /* ChatTableViewController.swift in Sources */,
 			);
