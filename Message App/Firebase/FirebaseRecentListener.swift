@@ -72,7 +72,8 @@ class FirebaseRecentListener {
     }
     
     // MARK: - Update Recents
-    func updateRecents(chatRoomId: String, lassMessage: String) {
+    func updateRecents(chatRoomId: String, lastMessage: String) {
+        //update last message for both recent of 2 user
         FirebaseReference(.Recent).whereField(CHAT_ROOM_ID, isEqualTo: chatRoomId).getDocuments { (snapshot, error) in
             guard let documents = snapshot?.documents else {
                 print("no document for recent update")
@@ -82,7 +83,7 @@ class FirebaseRecentListener {
                 return try? queryDocumentSnapshot.data(as: RecentChat.self)
             }
             for recent in allRecents {
-                self.updateRecentItemWithNewMessage(recent: recent, lastMessage: lassMessage)
+                self.updateRecentItemWithNewMessage(recent: recent, lastMessage: lastMessage)
             }
         }
     }

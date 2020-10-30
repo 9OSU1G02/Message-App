@@ -153,8 +153,9 @@ class FirebaseUserListener {
     }
     
     func downloadAllUserFromFireBase(completion: @escaping (_ allUsers: [User] )-> Void) {
-        var users : [User] = []
-        FirebaseReference(.User).getDocuments { (snapshot, error) in
+        
+        FirebaseReference(.User).addSnapshotListener{ (snapshot, error) in
+            var users : [User] = []
             guard let document = snapshot?.documents else {
                 print("No document in all Users")
                 return

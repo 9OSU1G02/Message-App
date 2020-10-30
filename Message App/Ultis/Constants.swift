@@ -24,3 +24,13 @@ let SENDER_ID = "senderID"
 let CHAT_ROOM_ID = "chatRoomId"
 let AVATAR_DEFAULT_IMAGE = "Messenger"
 let RECENT_CHAT_CELL = "recentChatCell"
+
+let SENT = "Sent"
+let READ = "Read"
+let TEXT = "text"
+let VIDEO = "video"
+let AUDIO = "audio"
+let LOCATION = "location"
+let PHOTO = "Photo"
+
+let DATE = "date"

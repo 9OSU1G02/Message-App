@@ -37,6 +37,7 @@ func chatRoomIdFrom(user1Id: String, user2Id: String) -> String {
     return chatRoomId
 }
 
+//Create recent for both user ( each user is sender of it own recent)
 func createRecentItems(chatRoomId: String, users: [User]) {
     //Hold ID of 2 user (ID current user and ID of user that current user want to chat with) in chat room (asssume that none of 2 user have recent object)
     var memberIdsCreateRecent = [users.first!.id, users.last!.id]

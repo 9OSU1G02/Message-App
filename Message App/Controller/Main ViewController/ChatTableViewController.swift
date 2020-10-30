@@ -72,9 +72,9 @@ class ChatTableViewController: UITableViewController {
         //make sure we have 2 recents because (case user1 start chat but user 2 has delete recent so user 2 will not get message from user 2 ---> Create new recent for user 2)
         RestartChat(chatRoomId: recent.chatRoomId, memberIds: recent.memberIds)
         
-//        let privateChatView = ChatViewController(chatRoomId: recent.chatRoomId, recepientId: recent.receiverId, recipientName: recent.receiverName)
-//        privateChatView.hidesBottomBarWhenPushed = true
-//        navigationController?.pushViewController(privateChatView, animated: true)
+        let privateChatView = ChatViewController(chatRoomId: recent.chatRoomId, recepientId: recent.receiverId, recipientName: recent.receiverName)
+        privateChatView.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(privateChatView, animated: true)
     }
     
     // MARK:  Download Chats

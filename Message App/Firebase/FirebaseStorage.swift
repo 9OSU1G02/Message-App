@@ -14,7 +14,7 @@ class FileStorage {
         //Reference to FireStorage
         let storageRef = Storage.storage().reference(forURL: FIREBASE_STORAGE_REFERENCE).child(directory)
         //Convert UIImage to Data (for upload to FireStorage)
-        let imageData = image.jpegData(compressionQuality: 1.0)
+        let imageData = image.jpegData(compressionQuality: 0.3)
         
         var task: StorageUploadTask!
         task = storageRef.putData(imageData!,metadata: nil,completion: { (metaData, error) in
@@ -44,7 +44,7 @@ class FileStorage {
     
     class func downloadImage(imageUrl: String, competion: @escaping (_ image: UIImage?) -> Void) {
         let imageFileName = fileNameFrom(fileUrl: imageUrl)
-        #warning("bug ather user will not get latest avatar of current user because avatar file name == user id --> locally alwasy have avatar")
+        #warning("bug ather user will not get latest avatar of current user because avatar file name == user id --> another user locally have avatar image with same name")
         //If image in locally then don't have to download from Firebase
 //        if fileExistAtPath(path: imageFileName) {
 //            // get data locally and convert to UIImage

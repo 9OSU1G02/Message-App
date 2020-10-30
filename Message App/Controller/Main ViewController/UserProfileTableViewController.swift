@@ -16,7 +16,7 @@ class UserProfileTableViewController: UITableViewController {
         setupUI()
         
     }
-
+    
     // MARK: - IBOutlets
     
     @IBOutlet weak var avatarImage: UIImageView!
@@ -35,14 +35,14 @@ class UserProfileTableViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.section == 1 {
             // Go to chat room
-            let chatRoomId = startChat(user1: User.currentUser!, user2: user!)
-            
-            
+            if let currentUser = User.currentUser, let user2 = user {
+                let chatRoomId = startChat(user1: currentUser, user2: user2)
+                let privateChatView = ChatViewController(chatRoomId: chatRoomId, recepientId: user!.id, recipientName: user!.username)
+                privateChatView.hidesBottomBarWhenPushed = true
+                navigationController?.pushViewController(privateChatView, animated: true)
+            }
         }
     }
-    
-    
-    
     
     // MARK:  SetupUI
     private func setupUI() {
