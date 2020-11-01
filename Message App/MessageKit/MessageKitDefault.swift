@@ -18,5 +18,5 @@ struct MKSender: SenderType, Equatable {
 enum MessageDefaults {
     //Bubble Message
     static let bubbleColorOutGoing = UIColor(named: "OutgoingMessage") ?? .blue
-    static let bubbleColorIncoming = UIColor.lightGray
+    static let bubbleColorIncoming = UIColor(named: "IncomingMessage") ?? UIColor.lightGray
 }

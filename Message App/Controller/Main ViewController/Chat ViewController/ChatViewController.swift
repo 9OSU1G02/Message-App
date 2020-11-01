@@ -26,25 +26,29 @@ class ChatViewController: MessagesViewController {
     
     var typingCounter = 0
     
+    var audioFileName = ""
+    var audioDuration: Date!
+    
     private var chatRoomId = ""
     private var recepientId = ""
     private var recipientName = ""
     private var refreshControl = UIRefreshControl()
+    
     var gallery: GalleryController!
     let micButton : InputBarButtonItem = InputBarButtonItem()
-    
+    open lazy var audioController = BasicAudioController(messageCollectionView: messagesCollectionView)
     // MARK: - Realm Listener
     var notificationToken: NotificationToken?
-            
+    
     // MARK: - Gesture
     var longPressGesture: UILongPressGestureRecognizer!
     
     let lefBarButtonView: UIView = {
-       let view = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 50))
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 50))
         return view
     }()
     let titleLable: UILabel = {
-       let title = UILabel(frame: CGRect(x: 5, y: 0, width: 180, height: 25))
+        let title = UILabel(frame: CGRect(x: 5, y: 0, width: 180, height: 25))
         title.textAlignment = .left
         title.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         title.adjustsFontSizeToFitWidth = true
@@ -52,17 +56,18 @@ class ChatViewController: MessagesViewController {
         return title
     }()
     let subTitleLable: UILabel = {
-       let subTitle = UILabel(frame: CGRect(x: 5, y: 22, width: 180, height: 20))
+        let subTitle = UILabel(frame: CGRect(x: 5, y: 22, width: 180, height: 20))
         subTitle.textAlignment = .left
         subTitle.font = UIFont.systemFont(ofSize: 13, weight: .medium)
         subTitle.adjustsFontSizeToFitWidth = true
         subTitle.textColor = .purple
         return subTitle
     }()
-        
+    
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureGestureRecogniezer()
         configureMessageCollectionView()
         configureMessageInputBar()
         configureLeftBarButton()
@@ -70,8 +75,18 @@ class ChatViewController: MessagesViewController {
         createTypingObserver()
         loadChats()
         listenForNewChats()
+        listenforReadStatusChange()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        FirebaseRecentListener.shared.resetRecentCounter(chatRoomId: chatRoomId)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(true)
+        FirebaseRecentListener.shared.resetRecentCounter(chatRoomId: chatRoomId)
+    }
     // MARK:  Inits
     init(chatRoomId: String, recepientId: String, recipientName:String) {
         super.init(nibName: nil, bundle: nil)
@@ -84,6 +99,98 @@ class ChatViewController: MessagesViewController {
         super.init(coder: coder)
     }
     
+    // MARK: - pull to load handle
+    
+    private func loadMoreMessages(maxNumber: Int, minNumber: Int) {
+        /* Min
+         |
+         |
+         Max
+         
+         Min
+         |
+         |
+         |
+         Max
+         
+         Min
+         |
+         |
+         |
+         Max*/
+        
+        maxMessageNumber = minNumber - 1
+        minMessageNumber = maxMessageNumber - 12
+        if minMessageNumber < 0 {
+            minMessageNumber = 0
+        }
+        //Revert because we want Insert new MaxMessage right after old MinMessage
+        for i in (minMessageNumber ... maxMessageNumber).reversed() {
+            insertOlderMessage(allLocalMessage[i])
+        }
+    }
+    
+    private func insertOlderMessage(_ localMessage: LocalMessage) {
+        //_collectionView: self : e.g: went we sen picture, we want to ask this collectionView(here is sefl: ChatViewController) to reload to show image
+        let incoming  = IncomingMessage(messageCollectionView: self)
+        
+        /* Min
+         |
+         |
+         Max
+         
+         Min
+         |
+         |
+         |
+         Max
+         
+         Min
+         |
+         |
+         |
+         Max*/
+        
+        //Insert message new max message right after old minMessage
+        mkMessages.insert(incoming.createMKMessage(localMessage: localMessage)!, at: 0)
+        
+        #warning("increase displayingMessagesCount every time 1 message is display")
+        displayingMessagesCount += 1
+    }
+    
+    private func listenforReadStatusChange() {
+        //When another user reading our messages, our message is being updated--> we want get thoese messge from firebase
+        FirebaseMessageListener.shared.listenForReadStatusChange(User.currentId, collectionId: chatRoomId) { (updatedMessage) in
+            
+            //Find message in local database which have id identical with message we got from firebase(have Read status, we don't want message have Sent status be cause it already in local data) then change status and date of message local == message on firebase
+            if updatedMessage.status != SENT {
+                self.updateMessage(updatedMessage)
+            }
+        }
+    }
+    
+    private func markMessageAsRead(_ localMessage: LocalMessage) {
+        // when user open chatroom, check if message from another user and have Sent status -> update message on firebase status to Read
+        if localMessage.senderId != User.currentId && localMessage.status != READ {
+            FirebaseMessageListener.shared.updateMessageInFireBase(localMessage, memberIds: [User.currentId,recepientId])
+        }
+    }
+    
+    // MARK: - Update Read Message Status
+    //update local message have indentical id with message on fb (have Read status)
+    private func updateMessage(_ localMessage: LocalMessage) {
+        for index in 0 ..< mkMessages.count {
+            let tempMessage = mkMessages[index]
+            if localMessage.id == tempMessage.messageId {
+                mkMessages[index].status = localMessage.status
+                mkMessages[index].readDate = localMessage.readDate
+                RealmManager.shared.saveToRealm(localMessage)
+                if mkMessages[index].status == READ {
+                    self.messagesCollectionView.reloadData()
+                }
+            }
+        }
+    }
     
     // MARK:  Actions
     func messageSend(text: String?, photo: UIImage?, video: Video?, audio: String?, location: String?, audioDuration: Float = 0.0) {
@@ -96,6 +203,39 @@ class ChatViewController: MessagesViewController {
         // - Remove listener because we don't want to get new chat save in realm when user is no longer in the chat view
         removeListener()
         navigationController?.popViewController(animated: true)
+    }
+    
+    private func actionAttachButton() {
+        //Hide the keyboard when show actionSheet
+        messageInputBar.inputTextView.resignFirstResponder()
+        let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let takePhotoOrVideo = UIAlertAction(title: "Camera", style: .default) { (alert) in
+            self.showImageGallery(camera: true)
+        }
+        let shareMedia = UIAlertAction(title: "Library", style: .default) { (alert) in
+            self.showImageGallery(camera: false)
+        }
+        let shareLocation = UIAlertAction(title: "Share Location", style: .default) { (alert) in
+            if let _ = LocationManager.shared.currentLocation {
+                self.messageSend(text: nil, photo: nil, video: nil, audio: nil, location: LOCATION)
+            }
+            else {
+                ProgressHUD.showError("no access to location")
+            }
+        }
+        let cancelAction = UIAlertAction (title: "Cancel", style: .cancel, handler: nil)
+        
+        //forKey: must be "image"
+        takePhotoOrVideo.setValue(UIImage(systemName: "camera"), forKey: "image")
+        shareMedia.setValue(UIImage(systemName: "photo.fill"), forKey: "image")
+        shareLocation.setValue(UIImage(systemName: "mappin.and.ellipse"), forKey: "image")
+        
+        
+        optionMenu.addAction(takePhotoOrVideo)
+        optionMenu.addAction(shareMedia)
+        optionMenu.addAction(shareLocation)
+        optionMenu.addAction(cancelAction)
+        present(optionMenu, animated: true, completion: nil)
     }
     
     // MARK: - Helpers
@@ -158,20 +298,22 @@ class ChatViewController: MessagesViewController {
     }
     
     private func configureMessageInputBar() {
+        //InputBarAccessoryViewDelegate
         messageInputBar.delegate = self
         
         let attachButton = InputBarButtonItem()
         attachButton.image = UIImage(systemName: "plus.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 30))
         attachButton.setSize(CGSize(width: 30, height: 30), animated: true)
         attachButton.onTouchUpInside { (item) in
-            // TODO: - Show Action sheet
+            // Show Action sheet
+            self.actionAttachButton()
         }
         
         micButton.image = UIImage(systemName: "mic.circle", withConfiguration: UIImage.SymbolConfiguration(pointSize: 30))
         micButton.setSize(CGSize(width: 30, height: 30), animated: true)
         updateMicButtonStatus(show: true)
         
-        //micButton.addGestureRecognizer(longPressGesture)
+        micButton.addGestureRecognizer(longPressGesture)
         
         messageInputBar.setStackViewItems([attachButton], forStack: .left, animated: true)
         //StackView have 36 point : 3 point left, 30point for attachButton, 3 point right
@@ -191,6 +333,13 @@ class ChatViewController: MessagesViewController {
             messageInputBar.setStackViewItems([messageInputBar.sendButton], forStack: .right, animated: false)
             messageInputBar.setRightStackViewWidthConstant(to: 55, animated: false)
         }
+    }
+    
+    private func configureGestureRecogniezer() {
+        longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(recordAudio))
+        longPressGesture.minimumPressDuration = 0.5
+        //Delay when touch began
+        longPressGesture.delaysTouchesBegan = true
     }
     
     private func configureLeftBarButton() {
@@ -231,14 +380,14 @@ class ChatViewController: MessagesViewController {
                 self.messagesCollectionView.scrollToBottom(animated: false)
             //Trigger when we something new (new local message) inserted to local data
             case .update(_,_,let inserttions, _):
-                    // inserttions : array of index of new massge was save in realm
-                    //index : index of new massge was save in realm --> is the same with index of new message in allLocalMessage because allLocalMessage and realm have euqual message blong to chatroom id ( read line 116)
-                    // e.g : if message was save have index in realm is 4 -> is also have index 4 in allLocalMessage
-                    for index in inserttions {
-                        //Convert new local message to MKMessage then Insert to mkMessages
-                        self.insertMessage(self.allLocalMessage[index])
-                        self.messagesCollectionView.reloadData()
-                        self.messagesCollectionView.scrollToBottom(animated: false)
+                // inserttions : array of index of new massge was save in realm
+                //index : index of new massge was save in realm --> is the same with index of new message in allLocalMessage because allLocalMessage and realm have euqual message blong to chatroom id ( read line 116)
+                // e.g : if message was save have index in realm is 4 -> is also have index 4 in allLocalMessage
+                for index in inserttions {
+                    //Convert new local message to MKMessage then Insert to mkMessages
+                    self.insertMessage(self.allLocalMessage[index])
+                    self.messagesCollectionView.reloadData()
+                    self.messagesCollectionView.scrollToBottom(animated: false)
                 }
             case .error(let error):
                 print("Error on new insertion",error.localizedDescription)
@@ -255,7 +404,7 @@ class ChatViewController: MessagesViewController {
     // MARK: - Insert Messages
     //Convert all local message in allLocalMessage to MKMessage then append to mkMessages
     private func insertMessages() {
-       // oldest message: min----max min----max min---->max: last message , every time we want to get 12 message (from min to max ) to display
+        // oldest message: min----max min----max min---->max: last message , every time we want to get 12 message (from min to max ) to display
         maxMessageNumber = allLocalMessage.count - displayingMessagesCount
         minMessageNumber = maxMessageNumber - 12
         if minMessageNumber < 0 {
@@ -269,9 +418,9 @@ class ChatViewController: MessagesViewController {
     //Conver 1 Local Message to MKMessage then append to mkMessages
     private func insertMessage(_ localMessage: LocalMessage) {
         //ONly update status for message not from current user
-        if localMessage.senderId != User.currentId {
-           // TODO: - markMessageAsRead(localMessage)
-        }
+        //if localMessage.senderId != User.currentId {
+        markMessageAsRead(localMessage)
+        //}
         //_collectionView: self : e.g: went we sen picture, we want to ask this collectionView(here is sefl: ChatViewController) to reload to show image
         let incoming  = IncomingMessage(messageCollectionView: self)
         mkMessages.append(incoming.createMKMessage(localMessage: localMessage)!)
@@ -279,7 +428,36 @@ class ChatViewController: MessagesViewController {
         #warning("increase displayingMessagesCount every time 1 message is display")
         displayingMessagesCount += 1
     }
-    
+    // MARK: - Audio Messages
+    @objc func recordAudio() {
+        switch longPressGesture.state {
+        //When user hold 0.5 s
+        case .began:
+            audioDuration = Date()
+            audioFileName = Date().stringDate()
+            // start recording
+            AudioRecoder.shared.startRecording(fileName: audioFileName)
+        
+        //User realsed finger
+        case .ended:
+            //stop recording
+            AudioRecoder.shared.finishRecording()
+            //Check if audio has successfully save in local or not
+            if fileExistAtPath(path: audioFileName + ".m4a") {
+                //How many second passed from audioDuration to Date()--current
+                let audioD = audioDuration.interval(ofComponent: .second, from: Date())
+                //send message
+                messageSend(text: nil, photo: nil, video: nil, audio: audioFileName,location: nil, audioDuration: audioD)
+            }
+            else {
+                print("no audio file")
+            }
+            //Clean audioFileName for next recording
+            audioFileName = ""
+        @unknown default:
+            print("unkown")
+        }
+    }
     // MARK: - Gallery
     private func showImageGallery(camera: Bool) {
         gallery = GalleryController()
@@ -297,11 +475,11 @@ class ChatViewController: MessagesViewController {
     
     // MARK: - UIScrollViewDelegate
     //Trigger when scrolling movement comes to a halt( begin Refreshing )
-     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         if refreshControl.isRefreshing {
             if displayingMessagesCount < allLocalMessage.count {
-                // TODO: - load early messages
-                //loadMoreMessages(maxNumber: maxMessageNumber, minNumber: minMessageNumber)
+                // - load early messages
+                loadMoreMessages(maxNumber: maxMessageNumber, minNumber: minMessageNumber)
                 messagesCollectionView.reloadDataAndKeepOffset()
             }
             refreshControl.endRefreshing()
@@ -338,5 +516,4 @@ extension ChatViewController: GalleryControllerDelegate {
     func galleryControllerDidCancel(_ controller: GalleryController) {
         controller.dismiss(animated: true, completion: nil)
     }
-        
 }

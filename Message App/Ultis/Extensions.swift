@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import ProgressHUD
+import MapKit
 extension UIView {
     func anchor(top: NSLayoutYAxisAnchor? = nil,
                 left: NSLayoutXAxisAnchor? = nil,
@@ -163,5 +164,98 @@ extension Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm"
         return dateFormatter.string(from: self)
+    }
+    
+    func stringDate() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "ddMMMyyyyHHmmss"
+        return dateFormatter.string(from: self)
+    }
+    
+    
+    //How many time passed
+    func interval(ofComponent comp: Calendar.Component, from date: Date) -> Float {
+        //gregorian calendar
+        let currentCalender = Calendar.current
+        guard let start = currentCalender.ordinality(of: comp, in: .era, for: self) else {
+            return 0
+        }
+        guard let end = currentCalender.ordinality(of: comp, in: .era, for: date) else {
+            return 0
+        }
+        return Float(end - start)
+    }
+    
+}
+
+
+let MERCATOR_OFFSET = 268435456.0
+let MERCATOR_RADIUS = 85445659.44705395
+let DEGREES = 180.0
+//Set initial zoom level of MapView
+public extension MKMapView {
+    
+    //MARK: Map Conversion Methods
+    
+    private func longitudeToPixelSpaceX(longitude:Double)->Double{
+        return round(MERCATOR_OFFSET + MERCATOR_RADIUS * longitude * M_PI / DEGREES)
+    }
+    
+    private func latitudeToPixelSpaceY(latitude:Double)->Double{
+        return round(MERCATOR_OFFSET - MERCATOR_RADIUS * log((1 + sin(latitude * M_PI / DEGREES)) / (1 - sin(latitude * M_PI / DEGREES))) / 2.0)
+    }
+    
+    private func pixelSpaceXToLongitude(pixelX:Double)->Double{
+        return ((round(pixelX) - MERCATOR_OFFSET) / MERCATOR_RADIUS) * DEGREES / M_PI
+    }
+    
+    private func pixelSpaceYToLatitude(pixelY:Double)->Double{
+        return (M_PI / 2.0 - 2.0 * atan(exp((round(pixelY) - MERCATOR_OFFSET) / MERCATOR_RADIUS))) * DEGREES / M_PI
+    }
+    
+    private func coordinateSpanWithCenterCoordinate(centerCoordinate:CLLocationCoordinate2D, zoomLevel:Double)->MKCoordinateSpan{
+        // convert center coordiate to pixel space
+        let centerPixelX = longitudeToPixelSpaceX(longitude: centerCoordinate.longitude)
+        let centerPixelY = latitudeToPixelSpaceY(latitude: centerCoordinate.latitude)
+        print(centerCoordinate)
+        // determine the scale value from the zoom level
+        let zoomExponent:Double = 20.0 - zoomLevel
+        let zoomScale:Double = pow(2.0, zoomExponent)
+        // scale the map’s size in pixel space
+        let mapSizeInPixels = self.bounds.size
+        let scaledMapWidth = Double(mapSizeInPixels.width) * zoomScale
+        let scaledMapHeight = Double(mapSizeInPixels.height) * zoomScale
+        // figure out the position of the top-left pixel
+        let topLeftPixelX = centerPixelX - (scaledMapWidth / 2.0)
+        let topLeftPixelY = centerPixelY - (scaledMapHeight / 2.0)
+        // find delta between left and right longitudes
+        let minLng = pixelSpaceXToLongitude(pixelX: topLeftPixelX)
+        let maxLng = pixelSpaceXToLongitude(pixelX: topLeftPixelX + scaledMapWidth)
+        let longitudeDelta = maxLng - minLng
+        let minLat = pixelSpaceYToLatitude(pixelY: topLeftPixelY)
+        let maxLat = pixelSpaceYToLatitude(pixelY: topLeftPixelY + scaledMapHeight)
+        let latitudeDelta = -1.0 * (maxLat - minLat)
+        return MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
+    }
+    
+    /**
+     Sets the center of the `MKMapView` to a `CLLocationCoordinate2D` with a custom zoom-level. There is no nee to set a region manually. :-)
+     
+     - author: Mylene Bayan (on GitHub)
+     */
+     func setCenter(_ coordinate:CLLocationCoordinate2D, zoomLevel:Double, animated:Bool){
+        // clamp large numbers to 28
+        var zoomLevel = zoomLevel
+        zoomLevel = min(zoomLevel, 28)
+        // use the zoom level to compute the region
+        print(coordinate)
+        let span = self.coordinateSpanWithCenterCoordinate(centerCoordinate: coordinate, zoomLevel: zoomLevel)
+        let region = MKCoordinateRegion(center: coordinate, span: span)
+        if region.center.longitude == -180.00000000{
+            print("Invalid Region")
+        }
+        else{
+            self.setRegion(region, animated: animated)
+        }
     }
 }

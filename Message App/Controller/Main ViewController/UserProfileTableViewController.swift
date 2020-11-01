@@ -14,7 +14,6 @@ class UserProfileTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        
     }
     
     // MARK: - IBOutlets

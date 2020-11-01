@@ -36,7 +36,7 @@ class UserTableViewCell: UITableViewCell {
             }
         }
         else {
-            self.avatarImage.image = UIImage(named: "Message")
+            self.avatarImage.image = UIImage(named: "Messenger")
         }
     }
 }
