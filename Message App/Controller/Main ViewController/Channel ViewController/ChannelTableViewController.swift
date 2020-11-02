@@ -13,6 +13,8 @@ class ChannelTableViewController: UITableViewController {
     var allChannels: [Channel] = []
     var subscribedChannels: [Channel] = []
     
+    var isRefresh = false
+    
     // MARK: - IBOutlets
     @IBOutlet weak var channelSegmentOutlet: UISegmentedControl!
     // MARK: - View Lifecycle
@@ -23,7 +25,9 @@ class ChannelTableViewController: UITableViewController {
         downloadSubscribedChannel()
         downloadAllChannels()
         tableView.refreshControl = UIRefreshControl()
+        isRefresh = true
     }
+    
     
     // MARK: - IBActions
     
@@ -36,6 +40,7 @@ class ChannelTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CELL_CHANNEL,for: indexPath) as! ChannelTableViewCell
+        cell.isRefresh = isRefresh
         let channel = channelSegmentOutlet.selectedSegmentIndex == 0 ? subscribedChannels[indexPath.row] : allChannels[indexPath.row]
         cell.configure(channel: channel)
         return cell
@@ -107,6 +112,7 @@ class ChannelTableViewController: UITableViewController {
     // MARK: - UISconcrollView Delegate
     override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         if refreshControl!.isRefreshing {
+            isRefresh = true
             self.downloadAllChannels()
             self.refreshControl!.endRefreshing()
         }

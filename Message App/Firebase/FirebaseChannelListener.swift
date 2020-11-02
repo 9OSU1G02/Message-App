@@ -7,7 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
-
+import ProgressHUD
 class FirebaseChannelListener {
     static let shared = FirebaseChannelListener()
     var channelListener:  ListenerRegistration!
@@ -80,7 +80,42 @@ class FirebaseChannelListener {
             completion(allChannels)
         }
     }
-    
+    func avatarImageFromChannel(channelId: String, isRefresh:Bool ,completion: @escaping (_ avatarImage: UIImage, _ avatarLink: String ) -> Void ) {
+        FirebaseReference(.Channel).document(channelId).getDocument { (snapshot, error) in
+            guard let document = snapshot else {
+                print("No document for user")
+                return
+            }
+            let result = Result {
+                //Decode User JSON form firestore to User
+                try? document.data(as: Channel.self)
+            }
+            switch result {
+            case .success(let channel):
+                if let channel = channel {
+                    if isRefresh == false {
+                        FileStorage.downloadImage(imageUrl: channel.avatarLink) { (avatarImage) in
+                            if let avatarImage = avatarImage {
+                                completion(avatarImage, channel.avatarLink)
+                            }
+                        }
+                    }
+                    else {
+                        FileStorage.downloadImageWithOutCheckForLocal(imageUrl: channel.avatarLink) { (avatarImage) in
+                            if let avatarImage = avatarImage {
+                                completion(avatarImage, channel.avatarLink)
+                            }
+                        }
+                    }
+                }
+                else {
+                    ProgressHUD.showFailed("Avatar Link don't exits")
+                }
+            case .failure(let error):
+                print("Error decoding user", error)
+            }
+        }
+    }
     //Remove any channel that user have subscribed
     func removeSubscribedChannels(_ allChannels: [Channel]) -> [Channel]  {
         var newChannels: [Channel] = []

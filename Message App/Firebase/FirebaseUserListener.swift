@@ -251,6 +251,8 @@ class FirebaseUserListener {
         }
     }
     
+    
+    
     // MARK: - Save user to firestore & UsersDefault
     
     func saveUserToFirestore(_ user: User) {

@@ -22,6 +22,7 @@ class ChannelChatViewController: MessagesViewController {
         return view
     }()
     
+    
 
     private var chatRoomId = ""
     var recepientId = ""

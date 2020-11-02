@@ -1,5 +1,5 @@
 //
-//  ChannelTableViewCell.swift
+//  ChannelTableViewCell.swift)
 //  Message App
 //
 //  Created by Nguyen Quoc Huy on 11/1/20.
@@ -9,7 +9,7 @@ import UIKit
 
 class ChannelTableViewCell: UITableViewCell {
     // MARK: - IbOutlets
-    
+    var isRefresh = false
     @IBOutlet weak var avatarImageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var aboutLabel: UILabel!
@@ -34,7 +34,11 @@ class ChannelTableViewCell: UITableViewCell {
         //Time elapsed since last message was send
         lastMessageDateLabel.text = timeElapsed(channel.lastMessageDate ?? Date())
         lastMessageDateLabel.adjustsFontSizeToFitWidth = true
-        setAvatar(avatarLink: channel.avatarLink)
+        FirebaseChannelListener.shared.avatarImageFromChannel(channelId: channel.id, isRefresh: isRefresh) { (avatarImage, avatarLink) in
+            self.avatarImageView.image = avatarImage.circleMasked
+            FirebaseReference(.Channel).document(channel.adminId).updateData(["avatarLink" : avatarLink])
+        }
+        isRefresh = false
     }
     
     private func setAvatar(avatarLink: String) {
