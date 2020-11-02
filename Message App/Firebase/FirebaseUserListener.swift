@@ -214,7 +214,7 @@ class FirebaseUserListener {
         }
     }
     
-    func avatarImageFromUser(userId: String, completion: @escaping (_ avatarImage: UIImage) -> Void ) {
+    func avatarImageFromUser(userId: String, isRefresh:Bool ,completion: @escaping (_ avatarImage: UIImage, _ avatarLink: String ) -> Void ) {
         FirebaseReference(.User).document(userId).getDocument { (snapshot, error) in
             guard let document = snapshot else {
                 print("No document for user")
@@ -227,9 +227,18 @@ class FirebaseUserListener {
             switch result {
             case .success(let user):
                 if let user = user {
-                    FileStorage.downloadImage(imageUrl: user.avatarLink) { (avatarImage) in
-                        if let avatarImage = avatarImage {
-                            completion(avatarImage)
+                    if isRefresh == false {
+                        FileStorage.downloadImage(imageUrl: user.avatarLink) { (avatarImage) in
+                            if let avatarImage = avatarImage {
+                                completion(avatarImage, user.avatarLink)
+                            }
+                        }
+                    }
+                    else {
+                        FileStorage.downloadImageWithOutCheckForLocal(imageUrl: user.avatarLink) { (avatarImage) in
+                            if let avatarImage = avatarImage {
+                                completion(avatarImage, user.avatarLink)
+                            }
                         }
                     }
                 }

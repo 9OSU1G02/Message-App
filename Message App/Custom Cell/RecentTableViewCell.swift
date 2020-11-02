@@ -6,17 +6,17 @@
 //
 
 import UIKit
-
+import Firebase
 class RecentTableViewCell: UITableViewCell {
-
+    var isRefresh = false
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
     
@@ -30,7 +30,7 @@ class RecentTableViewCell: UITableViewCell {
     @IBOutlet weak var isReceiverOnline: UIImageView!
     
     func configureCell(recent: RecentChat) {
-        usernameLabel.text = recent.receiverName
+        
         //Adjut font size for fit width with maximum shrink 90% origin text
         usernameLabel.adjustsFontSizeToFitWidth = true
         usernameLabel.minimumScaleFactor = 0.9
@@ -53,18 +53,37 @@ class RecentTableViewCell: UITableViewCell {
         else {
             isReceiverOnline.isHidden = true
         }
-        setAvatar(avatarLink: recent.avatarLink)
-        dateLabel.text = timeElapsed(recent.date ?? Date() )
-        lastMessageLabel.adjustsFontSizeToFitWidth = true
-    }
-    private func setAvatar(avatarLink: String) {
-        if avatarLink != "" {
-            FileStorage.downloadImage(imageUrl: avatarLink) { (avatarImage) in
-                self.avatarImage.image = avatarImage?.circleMasked
+        FirebaseUserListener.shared.avatarImageFromUser(userId: recent.receiverId, isRefresh: isRefresh) { (avatarImage, avatarLink) in
+                self.avatarImage.image = avatarImage.circleMasked
+                FirebaseReference(.Recent).document(recent.id).updateData(["avatarLink" : avatarLink])
+            }
+        
+        if isRefresh {
+            FirebaseUserListener.shared.downloadUsersFromFireBase(withIds: [recent.receiverId]) { (user) in
+                self.usernameLabel.text = user.first?.username
+                FirebaseReference(.Recent).document(recent.id).updateData(["receiverName" : user.first?.username ?? ""])
             }
         }
         else {
-            self.avatarImage.image = UIImage(named: AVATAR_DEFAULT_IMAGE)
+            usernameLabel.text = recent.receiverName
+        }
+        
+        
+        
+        dateLabel.text = timeElapsed(recent.date ?? Date() )
+        lastMessageLabel.adjustsFontSizeToFitWidth = true
+        isRefresh = false
+    }
+    
+    private func setAvatar(receiverId: String, isRefresh: Bool) {
+            FirebaseUserListener.shared.avatarImageFromUser(userId: receiverId, isRefresh: isRefresh) { (avatarImage, avatarLink) in
+                self.avatarImage.image = avatarImage.circleMasked
+            }
+    }
+    private func setRecentName(receiverId: String, isRefresh: Bool) {
+        FirebaseUserListener.shared.downloadUsersFromFireBase(withIds: [receiverId]) { (user) in
+            self.usernameLabel.text = user.first?.username
         }
     }
+    
 }

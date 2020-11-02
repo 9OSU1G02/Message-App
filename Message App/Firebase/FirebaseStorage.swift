@@ -57,7 +57,7 @@ class FileStorage {
         }
         else {
             // download from FB
-                if imageUrl != "" {
+            if imageUrl != "" {
                 let documentURL = URL(string: imageUrl)
                 //Background Queue
                 let downloadQueue = DispatchQueue(label: "imageDownloadQueue")
@@ -79,6 +79,35 @@ class FileStorage {
             }
         }
     }
+    
+    
+    class func downloadImageWithOutCheckForLocal(imageUrl: String, competion: @escaping (_ image: UIImage?) -> Void) {
+        if imageUrl != "" {
+            let imageFileName = fileNameFrom(fileUrl: imageUrl)
+            let documentURL = URL(string: imageUrl)
+            //Background Queue
+            let downloadQueue = DispatchQueue(label: "imageDownloadQueue")
+            downloadQueue.async {
+                //take whatever is in documentURL and create a data from it
+                let data = NSData(contentsOf: documentURL!)
+                if let data = data {
+                    //Save locally so next time we don't need to redownload it
+                    FileStorage.saveFileLocally(fileData: data, fileName: imageFileName)
+                    DispatchQueue.main.async {
+                        competion(UIImage(data: data as Data))
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        competion(nil)
+                    }
+                }
+            }
+        }
+        else {
+            return
+        }
+    }
+    
     // MARK: - Video
     class func downloadVideo(videoLink: String, competion: @escaping (_ isReadyToPlay: Bool, _ videoFileName: String) -> Void) {
         let videoUrl = URL(string: videoLink)
@@ -217,6 +246,8 @@ class FileStorage {
         //atomically: true -> Create temp file, if everything was succesfully it's just going to replace the old file
         fileData.write(to: docURL, atomically: true)
     }
+    
+    
 }
 
 // MARK: - Helpers

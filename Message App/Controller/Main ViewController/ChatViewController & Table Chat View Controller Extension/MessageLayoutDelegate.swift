@@ -58,15 +58,6 @@ extension ChannelChatViewController: MessagesLayoutDelegate {
     }
     
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-        if isFromCurrentSender(message: message) {
-            FirebaseUserListener.shared.avatarImageFromUser(userId: User.currentId) { (avatarImage) in
-                avatarView.set(avatar: Avatar(image: avatarImage, initials: ""))
-            }
-        }
-        else {
-            FirebaseUserListener.shared.avatarImageFromUser(userId: recepientId) { (avatarImage) in
-                avatarView.set(avatar: Avatar(image: avatarImage, initials: ""))
-            }
-        }
+        avatarView.set(avatar: Avatar(initials: mkMessages[indexPath.section].senderInitials))
     }
 }

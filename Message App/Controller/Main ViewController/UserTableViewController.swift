@@ -13,6 +13,7 @@ class UserTableViewController: UITableViewController {
     var filteredUsers: [User] = []
     let searchController = UISearchController(searchResultsController: nil)
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         //createDummyUsers()
@@ -20,7 +21,6 @@ class UserTableViewController: UITableViewController {
         setupSearchController()
         downloadUsers()
         tableView.refreshControl =  UIRefreshControl()
-        
     }
         
         // MARK: - Table view data source & delegate
