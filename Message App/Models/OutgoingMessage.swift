@@ -136,31 +136,37 @@ func sendPhotoMessage(message: LocalMessage, photo: UIImage, memberIds: [String]
 func sendVideoMessage(message: LocalMessage, video: Video, memberIDs: [String], channel: Channel? = nil) {
     message.message = "Video Message"
     message.type = VIDEO
-    //File name is equal to time message was send
-    let fileName = Date().stringDate()
-    //Thumbnail: First Picture of Message --> To set video placeholder
-    let thumbnailDicretory = "MediaMessages/Photo/" + "\(message.chatRoomId)/" + "_\(fileName)" + ".jpg"
-    let videoDirectory = "MediaMessages/Video/" + "\(message.chatRoomId)/" + "_\(fileName)" + ".mp4"
     
+    let fileName = Date().stringDate()
+    let thumbnailDirectory = "MediaMessages/Photo/" + "\(message.chatRoomId)/" + "_\(fileName)" + ".jpg"
+    let videoDirectory = "MediaMessages/Video/" + "\(message.chatRoomId)/" + "_\(fileName)" + ".mp4"
+
     let editor = VideoEditor()
-    editor.process(video: video) { (processedVideo, videoUrl) in
+    
+    editor.process(video: video) { (precessedVideo, videoUrl) in
+        
         if let tempPath = videoUrl {
-            //Get thumbail from video
-            let thumbnail = videoThumbnail(video: tempPath)
-            //Upload & Save thumbail locally
-            FileStorage.saveFileLocally(fileData: thumbnail.jpegData(compressionQuality: 0.7)! as NSData, fileName: fileName)
-            FileStorage.uploadImage(thumbnail, directory: thumbnailDicretory) { (thumbnailImagelink) in
-                if thumbnailImagelink != nil {
-                    // - Upload video & save video locally
+            
+            let thubnail = videoThumbnail(video: tempPath)
+            
+            FileStorage.saveFileLocally(fileData: thubnail.jpegData(compressionQuality: 0.7)! as NSData, fileName: fileName)
+            
+            FileStorage.uploadImage(thubnail, directory: thumbnailDirectory) { (imageLink) in
+                
+                if imageLink != nil {
+                    
                     let videoData = NSData(contentsOfFile: tempPath.path)
+                    
                     FileStorage.saveFileLocally(fileData: videoData!, fileName: fileName + ".mp4")
+                    
                     FileStorage.uploadVideo(videoData!, directory: videoDirectory) { (videoLink) in
-                        message.pictureUrl = thumbnailImagelink ?? ""
+                        
+                        message.pictureUrl = imageLink ?? ""
                         message.videoUrl = videoLink ?? ""
-                        if let channel = channel {
-                            OutgoingMessage.sendChannelMessage(message: message, channel: channel)
-                        }
-                        else {
+                        
+                        if channel != nil {
+                            OutgoingMessage.sendChannelMessage(message: message, channel: channel!)
+                        } else {
                             OutgoingMessage.sendMessage(message: message, memberIds: memberIDs)
                         }
                     }

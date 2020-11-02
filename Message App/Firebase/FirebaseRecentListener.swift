@@ -72,9 +72,31 @@ class FirebaseRecentListener {
     }
     
     // MARK: - Update Recents
+    func updateIsReceiverOnline(_ isReceiverOnline: Bool) {
+        //Get all Recent have senderId == current user id, add listener -> code will run when some thing change in Recent on firebase
+        FirebaseReference(.Recent).whereField("receiverId", isEqualTo: User.currentId).getDocuments { [weak self] (snapshot, error) in
+            
+            guard let document = snapshot?.documents else {
+                print("No Document for recent for recent chats")
+                return
+            }
+            //Convert element of document from JSON to RecentChat
+            let allRecents = document.compactMap { (queryDocumentSnapshot) -> RecentChat? in
+                return try? queryDocumentSnapshot.data(as: RecentChat.self)
+            }
+            for recent in allRecents {
+                //Only get recent have last message inside ( case user click start chat but then don't chat anny thing so we don't want get that recent to show )
+                var recent = recent
+                recent.isReceiverOnline = isReceiverOnline
+                self?.saveRecent(recent)
+                
+            }
+                       
+        }
+    }
     func updateRecents(chatRoomId: String, lastMessage: String) {
         //update last message for both recent of 2 user
-        FirebaseReference(.Recent).whereField(CHAT_ROOM_ID, isEqualTo: chatRoomId).getDocuments { (snapshot, error) in
+        FirebaseReference(.Recent).whereField(CHAT_ROOM_ID, isEqualTo: chatRoomId).getDocuments {[weak self] (snapshot, error) in
             guard let documents = snapshot?.documents else {
                 print("no document for recent update")
                 return
@@ -83,7 +105,7 @@ class FirebaseRecentListener {
                 return try? queryDocumentSnapshot.data(as: RecentChat.self)
             }
             for recent in allRecents {
-                self.updateRecentItemWithNewMessage(recent: recent, lastMessage: lastMessage)
+                self?.updateRecentItemWithNewMessage(recent: recent, lastMessage: lastMessage)
             }
         }
     }

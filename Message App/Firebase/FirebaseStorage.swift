@@ -52,7 +52,7 @@ class FileStorage {
                 competion(contentOfFile)
             }
             else {
-                competion(UIImage(named: "Messenger"))
+                competion(UIImage(named: "avatar"))
             }
         }
         else {

@@ -27,6 +27,7 @@ class RecentTableViewCell: UITableViewCell {
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var unreadCounterLabel: UILabel!
     @IBOutlet weak var unreadCounterBackgroundView: UIView!
+    @IBOutlet weak var isReceiverOnline: UIImageView!
     
     func configureCell(recent: RecentChat) {
         usernameLabel.text = recent.receiverName
@@ -44,6 +45,13 @@ class RecentTableViewCell: UITableViewCell {
         }
         else {
             unreadCounterBackgroundView.isHidden = true
+        }
+        if recent.isReceiverOnline {
+            isReceiverOnline.image = UIImage(named: "green")!.circleMasked
+            isReceiverOnline.isHidden = false
+        }
+        else {
+            isReceiverOnline.isHidden = true
         }
         setAvatar(avatarLink: recent.avatarLink)
         dateLabel.text = timeElapsed(recent.date ?? Date() )

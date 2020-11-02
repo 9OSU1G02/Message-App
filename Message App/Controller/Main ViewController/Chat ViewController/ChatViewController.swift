@@ -30,7 +30,7 @@ class ChatViewController: MessagesViewController {
     var audioDuration: Date!
     
     private var chatRoomId = ""
-    private var recepientId = ""
+     var recepientId = ""
     private var recipientName = ""
     private var refreshControl = UIRefreshControl()
     
@@ -67,12 +67,16 @@ class ChatViewController: MessagesViewController {
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureGestureRecogniezer()
-        configureMessageCollectionView()
-        configureMessageInputBar()
+        createTypingObserver()
         configureLeftBarButton()
         configureCustomTitle()
-        createTypingObserver()
+        configureMessageCollectionView()
+        configureGestureRecogniezer()
+        
+        configureMessageInputBar()
+        
+        
+        
         loadChats()
         listenForNewChats()
         listenforReadStatusChange()
@@ -84,8 +88,9 @@ class ChatViewController: MessagesViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(true)
+        super.viewWillDisappear(animated)
         FirebaseRecentListener.shared.resetRecentCounter(chatRoomId: chatRoomId)
+        audioController.stopAnyOngoingPlaying()
     }
     // MARK:  Inits
     init(chatRoomId: String, recepientId: String, recipientName:String) {
@@ -132,7 +137,7 @@ class ChatViewController: MessagesViewController {
     
     private func insertOlderMessage(_ localMessage: LocalMessage) {
         //_collectionView: self : e.g: went we sen picture, we want to ask this collectionView(here is sefl: ChatViewController) to reload to show image
-        let incoming  = IncomingMessage(messageCollectionView: self)
+        let incoming  = IncomingMessage(_collectionView: self)
         
         /* Min
          |
@@ -152,7 +157,7 @@ class ChatViewController: MessagesViewController {
          Max*/
         
         //Insert message new max message right after old minMessage
-        mkMessages.insert(incoming.createMKMessage(localMessage: localMessage)!, at: 0)
+        mkMessages.insert(incoming.createMessage(localMessage: localMessage)!, at: 0)
         
         #warning("increase displayingMessagesCount every time 1 message is display")
         displayingMessagesCount += 1
@@ -209,15 +214,15 @@ class ChatViewController: MessagesViewController {
         //Hide the keyboard when show actionSheet
         messageInputBar.inputTextView.resignFirstResponder()
         let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let takePhotoOrVideo = UIAlertAction(title: "Camera", style: .default) { (alert) in
-            self.showImageGallery(camera: true)
+        let takePhotoOrVideo = UIAlertAction(title: "Camera", style: .default) {[weak self] (alert) in
+            self?.showImageGallery(camera: true)
         }
-        let shareMedia = UIAlertAction(title: "Library", style: .default) { (alert) in
-            self.showImageGallery(camera: false)
+        let shareMedia = UIAlertAction(title: "Library", style: .default) {[weak self] (alert) in
+            self?.showImageGallery(camera: false)
         }
-        let shareLocation = UIAlertAction(title: "Share Location", style: .default) { (alert) in
+        let shareLocation = UIAlertAction(title: "Share Location", style: .default) {[weak self] (alert) in
             if let _ = LocationManager.shared.currentLocation {
-                self.messageSend(text: nil, photo: nil, video: nil, audio: nil, location: LOCATION)
+                self?.messageSend(text: nil, photo: nil, video: nil, audio: nil, location: LOCATION)
             }
             else {
                 ProgressHUD.showError("no access to location")
@@ -242,6 +247,7 @@ class ChatViewController: MessagesViewController {
     private func removeListener() {
         // Remmove listener
         FirebaseMessageListener.shared.removeListener()
+        FirebaseTypingListener.shared.removeTypingListener()
     }
     
     //Get date of last local message if available , if not take current date
@@ -252,9 +258,9 @@ class ChatViewController: MessagesViewController {
     
     // MARK: - Update Typing indicator
     func createTypingObserver() {
-        FirebaseTypingListener.shared.createTypingObserver(chatRoomId: chatRoomId) { (isTyping) in
+        FirebaseTypingListener.shared.createTypingObserver(chatRoomId: chatRoomId) {[weak self] (isTyping) in
             DispatchQueue.main.async {
-                self.updateTypingIndicator(isTyping)
+                self?.updateTypingIndicator(isTyping)
             }
         }
     }
@@ -418,12 +424,12 @@ class ChatViewController: MessagesViewController {
     //Conver 1 Local Message to MKMessage then append to mkMessages
     private func insertMessage(_ localMessage: LocalMessage) {
         //ONly update status for message not from current user
-        //if localMessage.senderId != User.currentId {
+        if localMessage.senderId != User.currentId {
         markMessageAsRead(localMessage)
-        //}
+        }
         //_collectionView: self : e.g: went we sen picture, we want to ask this collectionView(here is sefl: ChatViewController) to reload to show image
-        let incoming  = IncomingMessage(messageCollectionView: self)
-        mkMessages.append(incoming.createMKMessage(localMessage: localMessage)!)
+        let incoming  = IncomingMessage(_collectionView: self)
+        mkMessages.append(incoming.createMessage(localMessage: localMessage)!)
         
         #warning("increase displayingMessagesCount every time 1 message is display")
         displayingMessagesCount += 1
@@ -491,10 +497,10 @@ extension ChatViewController: GalleryControllerDelegate {
     func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
         if images.count > 0 {
             //convert Image(class) to UIImage
-            images.first!.resolve { (image) in
+            images.first!.resolve { [weak self] (image) in
                 // Upload Image
                 if image != nil {
-                    self.messageSend(text: nil, photo: image, video: nil, audio: nil, location: nil)
+                    self?.messageSend(text: nil, photo: image, video: nil, audio: nil, location: nil)
                 }
                 else {
                     ProgressHUD.showError("Couldnt select image!")

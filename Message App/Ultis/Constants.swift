@@ -42,3 +42,13 @@ let MEMBER_IDS = "memberIds"
 let ABOUT_CHANNEL_VIEW_STORYBOARD_ID = "aboutChannelView"
 let CELL_CHANNEL = "channelCell"
 let MY_CHANNEL_CELL = "myChannelCell"
+
+let MSG_HOUSE = "House"
+let MSG_TIME = "Time"
+let MSG_BUSINESS = "Business"
+
+let MSG_ONBOARDING_HOUSE = "Best House You Never Seen Before"
+let MSG_ONBOARDING_TIME = "Time Travel Just Like Flash"
+let MSG_ONBOARDING_BUSINESS = "Business Grow Fast and Safe"
+
+let ONBOARDING_BUTTON_TITLE = "Get Started"

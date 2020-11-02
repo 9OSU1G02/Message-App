@@ -20,9 +20,10 @@ class UserTableViewController: UITableViewController {
         setupSearchController()
         downloadUsers()
         tableView.refreshControl =  UIRefreshControl()
+        
     }
-
-    // MARK: - Table view data source & delegate
+        
+        // MARK: - Table view data source & delegate
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
@@ -58,10 +59,10 @@ class UserTableViewController: UITableViewController {
     
     // MARK:  Download all users and reload data
     private func downloadUsers() {
-        FirebaseUserListener.shared.downloadAllUserFromFireBase { (allFirebaseUsers) in
-            self.allUsers = allFirebaseUsers
+        FirebaseUserListener.shared.downloadAllUserFromFireBase { [weak self](allFirebaseUsers) in
+            self?.allUsers = allFirebaseUsers
             DispatchQueue.main.async {
-                self.tableView.reloadData()
+                self?.tableView.reloadData()
             }
         }
     }

@@ -14,6 +14,7 @@ class UserProfileTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        
     }
     
     // MARK: - IBOutlets
@@ -51,8 +52,8 @@ class UserProfileTableViewController: UITableViewController {
             usernameLabel.text = user.username
             statusLabel.text = user.status
             if user.avatarLink != "" {
-                FileStorage.downloadImage(imageUrl: user.avatarLink) { (avatarImage) in
-                    self.avatarImage.image = avatarImage?.circleMasked
+                FileStorage.downloadImage(imageUrl: user.avatarLink) { [weak self](avatarImage) in
+                    self?.avatarImage.image = avatarImage?.circleMasked
                 }
             }
         }

@@ -57,6 +57,7 @@ class LoginViewController: UIViewController {
                     if isEmailVerified {
                         // TODO: - Go to main view
                         self.goToMainView()
+                        FirebaseRecentListener.shared.updateIsReceiverOnline(false)
                     }
                     else {
                         ProgressHUD.showFailed("Please verify email")
@@ -109,15 +110,15 @@ class LoginViewController: UIViewController {
     // MARK: - Navigation
     
     private func showSignUpViewController() {
-        let signUpVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(identifier: SIGN_UP_STORYBOARD_ID)
+        let signUpVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(identifier: SIGN_UP_STORYBOARD_ID) as! SignUpViewController
         navigationController?.pushViewController(signUpVC, animated: true)
     }
     
     private func showForgotPasswordViewController() {
-        let forgotPasswordVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(identifier: FORGOT_PASSWORD_STORYBOARD_ID)
+        let forgotPasswordVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(identifier: FORGOT_PASSWORD_STORYBOARD_ID) as! ForgotPasswordViewController
         navigationController?.pushViewController(forgotPasswordVC, animated: true)
     }
-        
+    
     // MARK: - Selections
     @objc func textDidChange(_ sender: UITextField) {
         let formIsValid = checkFormIsValid()
@@ -125,7 +126,7 @@ class LoginViewController: UIViewController {
     }
     
     // MARK: - Configration
-                
+    
     func configureNotificationObservers() {
         emailTextFiled.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
         passwordTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
@@ -169,7 +170,7 @@ extension LoginViewController: AuthenticationFormCheck {
             resentEmailButtonLabel.isHidden = true
         }
     }
-            
+    
     func checkFormIsValid() -> Bool {
         return emailTextFiled.text != "" && passwordTextField.text != ""
     }
@@ -188,6 +189,7 @@ extension LoginViewController: GIDSignInDelegate {
             }
             // TODO: - Go to main view
             self.goToMainView()
+            FirebaseRecentListener.shared.updateIsReceiverOnline(true)
         }
     }
 }

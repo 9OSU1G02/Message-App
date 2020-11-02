@@ -21,4 +21,5 @@ struct RecentChat: Codable {
     var unreadCounter = 0
     var avatarLink = ""
     var lassMessage = ""
+    var isReceiverOnline = false
 }

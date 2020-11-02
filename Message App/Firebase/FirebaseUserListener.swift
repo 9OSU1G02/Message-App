@@ -15,7 +15,7 @@ class FirebaseUserListener {
     
     // MARK: - Registration
     func registerUserWith(email: String, password: String, completion: @escaping (_ error: Error?) -> Void) {
-        Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
+        Auth.auth().createUser(withEmail: email, password: password) { [weak self] (result, error) in
             guard let result = result else {
                 ProgressHUD.showError(error?.localizedDescription)
                 return
@@ -33,37 +33,45 @@ class FirebaseUserListener {
             }
             //Create user and save it to firestore
             let user = User(id: result.user.uid, username: email, email: email, status: "Available", avatarLink: "", hasSeenOnboard: false)
-            self.saveUserToFirestore(user)
+            self?.saveUserToFirestore(user)
         }
     }
     
     func reSendEmailVerification(email: String, completion: @escaping SendEmailVerificationCallback) {
-
-            Auth.auth().currentUser?.sendEmailVerification(completion: completion)
-
+        
+        Auth.auth().currentUser?.sendEmailVerification(completion: completion)
+        
     }
     
     func resetPasswordFor(email: String, completion: @escaping SendPasswordResetCallback) {
         Auth.auth().sendPasswordReset(withEmail: email, completion: completion)
     }
     
+    func updateUserHasSeenOnboardingWithFireBase(user: User) {
+        var user = user
+        FirebaseReference(.User).document(User.currentId).updateData(["hasSeenOnboard" : true])
+        user.hasSeenOnboard = true
+        saveUserLocally(user)
+    }
+    
     // MARK: - Login with email
     func loginUserWith(email: String, password: String, completion: @escaping (_ error:Error?, _ isEmailVerified: Bool) -> Void) {
         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
             guard let result = result, result.user.isEmailVerified else {
-                completion(error,false)
                 return
             }
             //Email is verified
             FirebaseUserListener.shared.downLoadUserFromFirestore(userId: result.user.uid)
             completion(error,true)
+            
         }
     }
     
     // MARK: - Logout
-        
+    
     func logOut(completion: @escaping (_ error: Error?) -> Void) {
         do {
+            FirebaseRecentListener.shared.updateIsReceiverOnline(false)
             try Auth.auth().signOut()
             USER_DEFAULT.removeObject(forKey: CURRENT_USER)
             completion(nil)
@@ -75,31 +83,63 @@ class FirebaseUserListener {
     
     // MARK: - Goole Sign In
     func signInWithGoogle(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error?, completion: @escaping (_ error: Error?) -> Void) {
-     
-      if let error = error {
-        completion(error)
-        return
-      }
-
-      guard let authentication = user.authentication else { return }
-      let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
-                                                        accessToken: authentication.accessToken)
+        
+        guard let authentication = user.authentication else { return }
+        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
+                                                       accessToken: authentication.accessToken)
         Auth.auth().signIn(with: credential) { (result, error) in
             guard let result = result else {
                 completion(error)
                 ProgressHUD.showError(error?.localizedDescription)
                 return
             }
-            if let username = result.user.displayName, let email = result.user.email {
-                let user = User(id: result.user.uid, username: username, email: email, status: "Available", avatarLink: "", hasSeenOnboard: false)
-                self.saveUserToFirestore(user)
-                saveUserLocally(user)
+            let uid = result.user.uid
+            
+            guard let username = result.user.displayName, let email = result.user.email else {
+                return
             }
-            else {
-                ProgressHUD.showError("Can't get information from your google account")
+            
+            //If id of google account don't exits in User --> return false --> save user to firestore
+            self.isGoogleAccountAlreadyExits(uid: uid) { (user) in
+                if let user = user {
+                    saveUserLocally(user)
+                }
+                else {
+                    let user = User(id: uid, username: username, email: email, status: "Available", avatarLink: "", hasSeenOnboard: false)
+                    saveUserLocally(user)
+                    self.saveUserToFirestore(user)
+                }
+                //error = nil
+                completion(error)
             }
-            //error = nil
-            completion(error)
+            
+        }
+    }
+    
+    private func isGoogleAccountAlreadyExits(uid: String, completion: @escaping (User?) -> Void) {
+        
+        FirebaseReference(.User).document(uid).getDocument { (querySnapshot, error) in
+            
+            guard let document = querySnapshot else {
+                completion(nil)
+                return
+            }
+            
+            let result = Result {
+                try? document.data(as: User.self)
+            }
+            
+            switch result {
+            case .success(let userObject):
+                if let user = userObject, user.id == uid {
+                    completion(user)
+                }
+                else {
+                    completion(nil)
+                }
+            case .failure(let error):
+                print("Error decoding user ", error)
+            }
         }
     }
     
@@ -154,7 +194,7 @@ class FirebaseUserListener {
     
     func downloadAllUserFromFireBase(completion: @escaping (_ allUsers: [User] )-> Void) {
         
-        FirebaseReference(.User).addSnapshotListener{ (snapshot, error) in
+        FirebaseReference(.User).getDocuments{ (snapshot, error) in
             var users : [User] = []
             guard let document = snapshot?.documents else {
                 print("No document in all Users")
@@ -171,6 +211,34 @@ class FirebaseUserListener {
                 }
             }
             completion(users)
+        }
+    }
+    
+    func avatarImageFromUser(userId: String, completion: @escaping (_ avatarImage: UIImage) -> Void ) {
+        FirebaseReference(.User).document(userId).getDocument { (snapshot, error) in
+            guard let document = snapshot else {
+                print("No document for user")
+                return
+            }
+            let result = Result {
+                //Decode User JSON form firestore to User
+                try? document.data(as: User.self)
+            }
+            switch result {
+            case .success(let user):
+                if let user = user {
+                    FileStorage.downloadImage(imageUrl: user.avatarLink) { (avatarImage) in
+                        if let avatarImage = avatarImage {
+                            completion(avatarImage)
+                        }
+                    }
+                }
+                else {
+                    ProgressHUD.showFailed("Avatar Link don't exits")
+                }
+            case .failure(let error):
+                print("Error decoding user", error)
+            }
         }
     }
     

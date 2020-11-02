@@ -8,48 +8,71 @@
 import Foundation
 import MessageKit
 import CoreLocation
-struct MKMessage: MessageType {
-    var mkSender : MKSender
-    var sender: SenderType {
-        return mkSender
-    }
+class MKMessage: NSObject, MessageType {
+    
     var messageId: String
-    var sentDate: Date
     var kind: MessageKind
+    var sentDate: Date
     var incoming: Bool
-    var senderInitals: String
-    var status: String
-    var readDate: Date
+    var mkSender: MKSender
+    var sender: SenderType { return mkSender }
+    var senderInitials: String
+    
     var photoItem: PhotoMessage?
     var videoItem: VideoMessage?
     var locationItem: LocationMessage?
     var audioItem: AudioMessage?
-    init(localMessage: LocalMessage) {
-        self.mkSender = MKSender(senderId: localMessage.senderId, displayName: localMessage.senderName)
-        self.messageId = localMessage.id
-        self.sentDate = localMessage.date
-        switch localMessage.type {
+
+    var status: String
+    var readDate: Date
+    
+    init(message: LocalMessage) {
+        
+        self.messageId = message.id
+        
+        self.mkSender = MKSender(senderId: message.senderId, displayName: message.senderName)
+        self.status = message.status
+        self.kind = MessageKind.text(message.message)
+        
+        switch message.type {
         case TEXT:
-            self.kind = MessageKind.text(localMessage.message)
+            self.kind = MessageKind.text(message.message)
+            
         case PHOTO:
-            self.photoItem = PhotoMessage()
-            self.kind = MessageKind.photo(self.photoItem ?? PhotoMessage())
+            
+            let photoItem = PhotoMessage(path: message.pictureUrl)
+            
+            self.kind = MessageKind.photo(photoItem)
+            self.photoItem = photoItem
+            
         case VIDEO:
-            self.videoItem = VideoMessage(url: nil)
-            self.kind = MessageKind.video(self.videoItem ?? VideoMessage(url: nil))
+            
+            let videoItem = VideoMessage(url: nil)
+            self.kind = MessageKind.video(videoItem)
+            self.videoItem = videoItem
+            
         case LOCATION:
-            self.locationItem = LocationMessage(location: CLLocation(latitude: localMessage.latitude, longitude: localMessage.longtitude))
-            self.kind = MessageKind.location(self.locationItem ?? LocationMessage(location: CLLocation(latitude: 0, longitude: 0)))
+            
+            let locationItem = LocationMessage(location: CLLocation(latitude: message.latitude, longitude: message.longtitude))
+            
+            self.kind = MessageKind.location(locationItem)
+            self.locationItem = locationItem
+            
         case AUDIO:
-            self.audioItem = AudioMessage(duration: Float(localMessage.audioDuration))
-            self.kind = MessageKind.audio(self.audioItem ?? AudioMessage(duration: 0))
+            
+            let audioItem = AudioMessage(duration: 2.0)
+            
+            self.kind = MessageKind.audio(audioItem)
+            self.audioItem = audioItem
+            
         default:
-            self.kind = MessageKind.text(localMessage.message)
-            print("unknow message")
+            self.kind = MessageKind.text(message.message)
+            print("unknown message type")
         }
+        
+        self.senderInitials = message.senderInitials
+        self.sentDate = message.date
+        self.readDate = message.readDate
         self.incoming = User.currentId != mkSender.senderId
-        self.senderInitals = localMessage.senderInitials
-        self.status = localMessage.status
-        self.readDate = localMessage.readDate
     }
 }

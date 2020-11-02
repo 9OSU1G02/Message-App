@@ -36,8 +36,8 @@ extension ChatViewController: MessageCellDelegate {
             if mkMessage.videoItem != nil && mkMessage.videoItem!.url != nil {
                 let player = AVPlayer(url: mkMessage.videoItem!.url!)
                 let moviePlayer = AVPlayerViewController()
-//                let sesstion = AVAudioSession.sharedInstance()
-//                try! sesstion.setCategory(.playAndRecord, mode: .default, options: .defaultToSpeaker)
+                let sesstion = AVAudioSession.sharedInstance()
+                try! sesstion.setCategory(.playAndRecord, mode: .default, options: .defaultToSpeaker)
                 moviePlayer.player = player
                 present(moviePlayer, animated: true) {
                     //Play video
@@ -113,8 +113,8 @@ extension ChannelChatViewController: MessageCellDelegate {
             if mkMessage.videoItem != nil && mkMessage.videoItem!.url != nil {
                 let player = AVPlayer(url: mkMessage.videoItem!.url!)
                 let moviePlayer = AVPlayerViewController()
-//                let sesstion = AVAudioSession.sharedInstance()
-//                try! sesstion.setCategory(.playAndRecord, mode: .default, options: .defaultToSpeaker)
+                let sesstion = AVAudioSession.sharedInstance()
+                try! sesstion.setCategory(.playAndRecord, mode: .default, options: .defaultToSpeaker)
                 moviePlayer.player = player
                 present(moviePlayer, animated: true) {
                     //Play video

@@ -44,8 +44,8 @@ class EditProfileTableViewController: UITableViewController {
             statusTextField.text = user.status
             if user.avatarLink != "" {
                 // set avatar
-                FileStorage.downloadImage(imageUrl: user.avatarLink) { (avatarImage) in
-                    self.avatarImage.image = avatarImage?.circleMasked
+                FileStorage.downloadImage(imageUrl: user.avatarLink) {[weak self] (avatarImage) in
+                    self?.avatarImage.image = avatarImage?.circleMasked
                 }
             }
         }
@@ -100,11 +100,11 @@ extension EditProfileTableViewController: GalleryControllerDelegate {
     func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
         if images.count > 0 {
             //convert Image(class) to UIImage
-            images.first!.resolve { (avatarUIImage) in
+            images.first!.resolve { [weak self](avatarUIImage) in
                 // Upload Image
                 if avatarUIImage != nil {
-                    self.uploadAvatarImage(avatarUIImage!)
-                    self.avatarImage.image = avatarUIImage?.circleMasked
+                    self?.uploadAvatarImage(avatarUIImage!)
+                    self?.avatarImage.image = avatarUIImage?.circleMasked
                 }
                 else {
                     ProgressHUD.showError("Couldnt select image!")

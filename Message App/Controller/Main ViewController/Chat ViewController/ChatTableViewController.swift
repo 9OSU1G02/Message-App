@@ -16,11 +16,14 @@ class ChatTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.tableFooterView = UIView()
+        
         downloadRecentChats()
         setupSearchController()
-        }
+    }
     override func viewDidAppear(_ animated: Bool) {
+        presentOnboardingIfNeccessary()
         downloadRecentChats()
+        
     }
     // MARK: - Table view data source
     
@@ -67,6 +70,14 @@ class ChatTableViewController: UITableViewController {
         return 5
     }
     
+    private func presentOnboardingIfNeccessary() {
+        guard let user = User.currentUser, user.hasSeenOnboard == false else { return }
+        let onboardingVC = OnboardingViewController()
+        onboardingVC.delegate = self
+        onboardingVC.modalPresentationStyle = .fullScreen
+        present(onboardingVC, animated: true, completion: nil)
+    }
+    
     // MARK:  Navigation
     func gotoChat(recent: RecentChat) {
         //make sure we have 2 recents because (case user1 start chat but user 2 has delete recent so user 2 will not get message from user 2 ---> Create new recent for user 2)
@@ -79,10 +90,10 @@ class ChatTableViewController: UITableViewController {
     
     // MARK:  Download Chats
     private func downloadRecentChats() {
-        FirebaseRecentListener.shared.downloadRecentChatsFromFireStore { (allRecent) in
-            self.allRecents = allRecent
+        FirebaseRecentListener.shared.downloadRecentChatsFromFireStore {[weak self] (allRecent) in
+            self?.allRecents = allRecent
             DispatchQueue.main.async {
-                self.tableView.reloadData()
+                self?.tableView.reloadData()
             }
         }
     }
@@ -115,3 +126,10 @@ extension ChatTableViewController: UISearchResultsUpdating {
         filteredContentForSearchText(searchText: searchController.searchBar.text!)
     }
 }
+extension ChatTableViewController: OnboardingController {
+    func controllerWantToDismiss(_ controller: OnboardingViewController) {
+        FirebaseUserListener.shared.updateUserHasSeenOnboardingWithFireBase(user: User.currentUser!)
+        dismiss(animated: true, completion: nil)
+    }
+}
+

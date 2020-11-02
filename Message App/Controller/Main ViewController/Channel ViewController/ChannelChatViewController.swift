@@ -24,7 +24,7 @@ class ChannelChatViewController: MessagesViewController {
     
 
     private var chatRoomId = ""
-    private var recepientId = ""
+    var recepientId = ""
     private var recipientName = ""
     private var refreshControl = UIRefreshControl()
     let currentUser = MKSender(senderId: User.currentId, displayName: User.currentUser!.username)
@@ -224,8 +224,8 @@ class ChannelChatViewController: MessagesViewController {
             markMessageAsRead(localMessage)
         }
         //_collectionView: self : e.g: went we sen picture, we want to ask this collectionView(here is sefl: ChatViewController) to reload to show image
-        let incoming  = IncomingMessage(messageCollectionView: self)
-        mkMessages.append(incoming.createMKMessage(localMessage: localMessage)!)
+        let incoming  = IncomingMessage(_collectionView: self)
+        mkMessages.append(incoming.createMessage(localMessage: localMessage)!)
         
         #warning("increase displayingMessagesCount every time 1 message is display")
         displayingMessagesCount += 1
@@ -262,7 +262,7 @@ class ChannelChatViewController: MessagesViewController {
     
     private func insertOlderMessage(_ localMessage: LocalMessage) {
         //_collectionView: self : e.g: went we sen picture, we want to ask this collectionView(here is sefl: ChatViewController) to reload to show image
-        let incoming  = IncomingMessage(messageCollectionView: self)
+        let incoming  = IncomingMessage(_collectionView: self)
         //Insert message new max message right after old minMessage
         /* Min
          |
@@ -280,7 +280,7 @@ class ChannelChatViewController: MessagesViewController {
          |
          |
          Max*/
-        mkMessages.insert(incoming.createMKMessage(localMessage: localMessage)!, at: 0)
+        mkMessages.insert(incoming.createMessage(localMessage: localMessage)!, at: 0)
         
         #warning("increase displayingMessagesCount every time 1 message is display")
         displayingMessagesCount += 1

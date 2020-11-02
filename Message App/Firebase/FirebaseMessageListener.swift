@@ -119,5 +119,8 @@ class FirebaseMessageListener {
     // MARK: - Remove Listener
     func removeListener() {
         newChatListener.remove()
+        if self.updatedChatListener != nil {
+            self.updatedChatListener.remove()
+        }
     }
 }

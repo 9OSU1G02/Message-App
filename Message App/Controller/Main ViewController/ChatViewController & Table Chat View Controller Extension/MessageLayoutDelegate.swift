@@ -33,8 +33,7 @@ extension ChatViewController: MessagesLayoutDelegate {
     }
     
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-        //Avatar in chat room will be First character in User name
-        avatarView.set(avatar: Avatar(initials: mkMessages[indexPath.section].senderInitals.capitalized))
+        avatarView.set(avatar: Avatar(initials: mkMessages[indexPath.section].senderInitials))
     }
 }
 
@@ -57,9 +56,17 @@ extension ChannelChatViewController: MessagesLayoutDelegate {
     func cellBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         return isFromCurrentSender(message: message) ? 17 : 0
     }
-        
+    
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-        //Avatar in chat room will be First character in User name
-        avatarView.set(avatar: Avatar(initials: mkMessages[indexPath.section].senderInitals.capitalized))
+        if isFromCurrentSender(message: message) {
+            FirebaseUserListener.shared.avatarImageFromUser(userId: User.currentId) { (avatarImage) in
+                avatarView.set(avatar: Avatar(image: avatarImage, initials: ""))
+            }
+        }
+        else {
+            FirebaseUserListener.shared.avatarImageFromUser(userId: recepientId) { (avatarImage) in
+                avatarView.set(avatar: Avatar(image: avatarImage, initials: ""))
+            }
+        }
     }
 }

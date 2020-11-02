@@ -27,12 +27,12 @@ class SignUpViewController: UIViewController {
     @IBAction func signUpButtonPressed(_ sender: UIButton) {
         if let email = emailTextField.text, let password = passwordTextField.text, let repeatPassword = repeatPasswordTexiField.text {
             if password == repeatPassword {
-                FirebaseUserListener.shared.registerUserWith(email: email, password: password) { (error) in
+                FirebaseUserListener.shared.registerUserWith(email: email, password: password) { [weak self](error) in
                     if let error = error {
                         ProgressHUD.showError(error.localizedDescription)
                     }
                     else {
-                        self.navigationController?.popViewController(animated: true)
+                        self?.navigationController?.popViewController(animated: true)
                     }
                 }
             }

@@ -44,14 +44,15 @@ class SettingsTableViewController: UITableViewController {
     // MARK: - IBActions
     
     @IBAction func logOutButtonPressed(_ sender: UIButton) {
-        FirebaseUserListener.shared.logOut { (error) in
+        FirebaseUserListener.shared.logOut { [weak self](error) in
             if let error = error {
                 ProgressHUD.showError(error.localizedDescription)
             }
             else {
-                let loginVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: LOGIN_VIEW_STORYBOARD_ID) as! LoginViewController
-               loginVC.modalPresentationStyle = .fullScreen
-                self.present(loginVC, animated: true, completion: nil)
+                FirebaseRecentListener.shared.updateIsReceiverOnline(false)
+                let loginVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "AuthNavitationController") as! UINavigationController
+                loginVC.modalPresentationStyle = .fullScreen
+                self?.present(loginVC, animated: true, completion: nil)
             }
         }
     }
@@ -61,11 +62,11 @@ class SettingsTableViewController: UITableViewController {
         if let user = User.currentUser {
             usernameLabel.text = user.username
             statusLabel.text = user.status
-            appVersionLabel.text = "\(Bundle.main.infoDictionary!["CFBundleShortVersionString"] ?? 1.0)"
+            appVersionLabel.text = "App version \(Bundle.main.infoDictionary!["CFBundleShortVersionString"] ?? 1.0)"
             if user.avatarLink != "" {
                 //download(or get form locally if have ) and set avatar image
-                FileStorage.downloadImage(imageUrl: user.avatarLink) { (avatarImage) in
-                    self.avatarImage.image = avatarImage?.circleMasked
+                FileStorage.downloadImage(imageUrl: user.avatarLink) { [weak self](avatarImage) in
+                    self?.avatarImage.image = avatarImage?.circleMasked
                 }
             }
         }
