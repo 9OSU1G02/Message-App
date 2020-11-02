@@ -8,7 +8,7 @@
 import UIKit
 
 class UserTableViewCell: UITableViewCell {
-
+    var isRefresh = false
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -26,7 +26,12 @@ class UserTableViewCell: UITableViewCell {
     func configure(user: User){
         usernameLabel.text = user.username
         statusLabel.text = user.status
-        setAvatar(avatarLink: user.avatarLink)
+        
+        FirebaseUserListener.shared.avatarImageFromUser(userId: user.id, isRefresh: isRefresh) { (avatarImage, avatarLink) in
+                self.avatarImage.image = avatarImage.circleMasked
+                FirebaseReference(.User).document(user.id).updateData(["avatarLink" : avatarLink])
+        }
+        isRefresh = false
     }
     
     func setAvatar(avatarLink: String) {

@@ -12,7 +12,7 @@ class UserTableViewController: UITableViewController {
     var allUsers: [User] = []
     var filteredUsers: [User] = []
     let searchController = UISearchController(searchResultsController: nil)
-    
+    var isRefresh = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,8 +21,9 @@ class UserTableViewController: UITableViewController {
         setupSearchController()
         downloadUsers()
         tableView.refreshControl =  UIRefreshControl()
+        isRefresh = true
     }
-        
+   
         // MARK: - Table view data source & delegate
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -31,6 +32,7 @@ class UserTableViewController: UITableViewController {
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: USER_CELL, for: indexPath) as! UserTableViewCell
+        cell.isRefresh = self.isRefresh
         let user = searchController.isActive && searchController.searchBar.text != "" ? filteredUsers[indexPath.row] : allUsers[indexPath.row]
         cell.configure(user: user)
         return cell
@@ -95,6 +97,7 @@ class UserTableViewController: UITableViewController {
     //Trigger when scrolling movement comes to a halt -> Perorm Refreshing
     override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         if refreshControl!.isRefreshing {
+            isRefresh = true
             downloadUsers()
             refreshControl!.endRefreshing()
         }

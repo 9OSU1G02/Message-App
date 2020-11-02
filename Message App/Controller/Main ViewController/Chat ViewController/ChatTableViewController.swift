@@ -19,16 +19,9 @@ class ChatTableViewController: UITableViewController {
         tableView.refreshControl = UIRefreshControl()
         downloadRecentChats()
         setupSearchController()
+        isRefresh = true
     }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        isRefresh = false
-    }
-    override func viewDidAppear(_ animated: Bool) {
-        presentOnboardingIfNeccessary()
-        downloadRecentChats()
-        isRefresh = false
-    }
+    
     // MARK: - Table view data source
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -38,10 +31,8 @@ class ChatTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: RECENT_CHAT_CELL, for: indexPath) as! RecentTableViewCell
-        if isRefresh {
-            cell.isRefresh = isRefresh
-        }
-        let recent = searchController.isActive && searchController.searchBar.text != "" ? filterRecents[indexPath.row] : allRecents[indexPath.row]
+                    cell.isRefresh = isRefresh
+                let recent = searchController.isActive && searchController.searchBar.text != "" ? filterRecents[indexPath.row] : allRecents[indexPath.row]
         cell.configureCell(recent: recent)
         return cell
     }
@@ -129,9 +120,10 @@ class ChatTableViewController: UITableViewController {
     override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
 
         if self.refreshControl!.isRefreshing {
+            isRefresh = true
             self.downloadRecentChats()
             self.refreshControl!.endRefreshing()
-            self.isRefresh = true
+            
         }
     }
 }
