@@ -33,7 +33,7 @@ class FirebaseUserListener {
                 }
             }
             //Create user and save it to firestore
-            let user = User(id: result.user.uid, username: email, email: email, status: "Available", avatarLink: "", hasSeenOnboard: false)
+            let user = User(id: result.user.uid, username: email, email: email, status: "Available", avatarLink: "")
             self.saveUserToFirestore(user)
         }
     }
@@ -47,14 +47,7 @@ class FirebaseUserListener {
     func resetPasswordFor(email: String, completion: @escaping SendPasswordResetCallback) {
         Auth.auth().sendPasswordReset(withEmail: email, completion: completion)
     }
-    
-    func updateUserHasSeenOnboardingWithFireBase(user: User) {
-        var user = user
-        FirebaseReference(.User).document(User.currentId).updateData(["hasSeenOnboard" : true])
-        user.hasSeenOnboard = true
-        saveUserLocally(user)
-    }
-    
+            
     // MARK: - Login with email
     func loginUserWith(email: String, password: String, completion: @escaping () -> Void) {
         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
@@ -107,7 +100,7 @@ class FirebaseUserListener {
                     saveUserLocally(user)
                 }
                 else {
-                    let user = User(id: uid, username: username, email: email, status: "Available", avatarLink: "", hasSeenOnboard: false)
+                    let user = User(id: uid, username: username, email: email, status: "Available", avatarLink: "")
                     saveUserLocally(user)
                     self.saveUserToFirestore(user)
                 }

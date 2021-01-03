@@ -30,7 +30,6 @@
 		B6C6A202254AA51C009368F8 /* FirebaseRecentListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C6A201254AA51B009368F8 /* FirebaseRecentListener.swift */; };
 		B6C6A205254AA92D009368F8 /* RecentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C6A204254AA92D009368F8 /* RecentTableViewCell.swift */; };
 		B6C6A208254AB288009368F8 /* StartChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C6A207254AB288009368F8 /* StartChat.swift */; };
-		B6C75848254FCFF900EF080E /* OnboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C75847254FCFF900EF080E /* OnboardViewController.swift */; };
 		B6C8ED77254A88A000BB0361 /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C8ED76254A88A000BB0361 /* UserTableViewCell.swift */; };
 		B6CA6B6A254EB63C00B394A8 /* ChannelTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CA6B69254EB63C00B394A8 /* ChannelTableViewCell.swift */; };
 		B6CA6B6D254EB74600B394A8 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CA6B6C254EB74600B394A8 /* Channel.swift */; };
@@ -97,7 +96,6 @@
 		B6C6A201254AA51B009368F8 /* FirebaseRecentListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseRecentListener.swift; sourceTree = "<group>"; };
 		B6C6A204254AA92D009368F8 /* RecentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentTableViewCell.swift; sourceTree = "<group>"; };
 		B6C6A207254AB288009368F8 /* StartChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartChat.swift; sourceTree = "<group>"; };
-		B6C75847254FCFF900EF080E /* OnboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardViewController.swift; sourceTree = "<group>"; };
 		B6C8ED76254A88A000BB0361 /* UserTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
 		B6CA6B69254EB63C00B394A8 /* ChannelTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTableViewCell.swift; sourceTree = "<group>"; };
 		B6CA6B6C254EB74600B394A8 /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
@@ -311,7 +309,6 @@
 				B6D1229E2549852F00E1ABB8 /* Authentication ViewController */,
 				B6CCF5C9254E6D7E007B10C6 /* MapViewController.swift */,
 				B6C524BE254EA832003D6031 /* BasicAudioController.swift */,
-				B6C75847254FCFF900EF080E /* OnboardViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -516,7 +513,6 @@
 				B61DF2382547D7190085751E /* LoginViewController.swift in Sources */,
 				B6CE323A254D4ACE00868F98 /* PhotoMessage.swift in Sources */,
 				B6CCC9FD254B28DA00F800A3 /* RealmManager.swift in Sources */,
-				B6C75848254FCFF900EF080E /* OnboardViewController.swift in Sources */,
 				B61DF2342547D7190085751E /* AppDelegate.swift in Sources */,
 				B6C6A1F9254A9D2D009368F8 /* UserProfileTableViewController.swift in Sources */,
 				B6C8ED77254A88A000BB0361 /* UserTableViewCell.swift in Sources */,

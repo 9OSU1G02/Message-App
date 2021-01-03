@@ -58,7 +58,7 @@ class LoginViewController: UIViewController {
                 guard let self = self else { return}
                     // TODO: - Go to main view
                         self.goToMainView()
-                        FirebaseRecentListener.shared.updateIsReceiverOnline(false)
+                        FirebaseRecentListener.shared.updateIsReceiverOnline(true)
             }
         }
     }

@@ -68,13 +68,7 @@ class ChatTableViewController: UITableViewController {
         return 5
     }
     
-    private func presentOnboardingIfNeccessary() {
-        guard let user = User.currentUser, user.hasSeenOnboard == false else { return }
-        let onboardingVC = OnboardingViewController()
-        onboardingVC.delegate = self
-        onboardingVC.modalPresentationStyle = .fullScreen
-        present(onboardingVC, animated: true, completion: nil)
-    }
+    
     
     // MARK:  Navigation
     func gotoChat(recent: RecentChat) {
@@ -131,12 +125,6 @@ class ChatTableViewController: UITableViewController {
 extension ChatTableViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         filteredContentForSearchText(searchText: searchController.searchBar.text!)
-    }
-}
-extension ChatTableViewController: OnboardingController {
-    func controllerWantToDismiss(_ controller: OnboardingViewController) {
-        FirebaseUserListener.shared.updateUserHasSeenOnboardingWithFireBase(user: User.currentUser!)
-        dismiss(animated: true, completion: nil)
     }
 }
 

@@ -13,7 +13,7 @@ struct User: Codable, Equatable {
     var email: String
     var status: String
     var avatarLink = ""
-    var hasSeenOnboard = false
+    
     
     static var currentId: String {
         return Auth.auth().currentUser?.uid ?? ""
