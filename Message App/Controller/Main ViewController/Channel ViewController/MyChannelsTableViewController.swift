@@ -21,6 +21,9 @@ class MyChannelsTableViewController: UITableViewController {
         downloadUserChannels()
     }
     
+    deinit {
+        print("Deinit MyChannel tableview")
+    }
     // MARK: - IbActions
     @IBAction func addBarButtonPressed(_ sender: UIBarButtonItem) {
         performSegue(withIdentifier: MY_CHANNEL_TO_ADD_CHANNEL_SEGUE, sender: self)
@@ -28,7 +31,8 @@ class MyChannelsTableViewController: UITableViewController {
     
     // MARK: - Download Channels
     private func downloadUserChannels() {
-        FirebaseChannelListener.shared.downloadUserChannelFromFirebase { (allChannels) in
+        FirebaseChannelListener.shared.downloadUserChannelFromFirebase {[weak self] (allChannels) in
+            guard let self = self else { return }
             self.myChannels = allChannels
             DispatchQueue.main.async {
                 self.tableView.reloadData()

@@ -28,6 +28,9 @@ class AboutChannelTableViewController: UITableViewController {
         setAvatar(avatarLink: channel.avatarLink)
         configureRightBarButton()
     }
+    deinit {
+        print("Deinit about channel vc")
+    }
     // MARK: - Configure
     private func showChannelData() {
         title = channel.name
@@ -38,8 +41,8 @@ class AboutChannelTableViewController: UITableViewController {
     
     private func setAvatar(avatarLink: String) {
         if avatarLink != "" {
-            FileStorage.downloadImage(imageUrl: avatarLink) { (avatarImage) in
-                DispatchQueue.main.async {
+            FileStorage.downloadImage(imageUrl: avatarLink) {(avatarImage) in
+                    DispatchQueue.main.async {
                     self.avatarImageView.image = avatarImage?.circleMasked
                 }
             }

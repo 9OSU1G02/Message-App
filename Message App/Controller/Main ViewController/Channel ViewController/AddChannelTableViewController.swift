@@ -31,6 +31,9 @@ class AddChannelTableViewController: UITableViewController {
         configureLeftBarButton()
     }
     
+    deinit {
+        print("Deinit addchannel vc")
+    }
     
     // MARK: - IBActions
     @IBAction func saveButtonPressed(_ sender: UIBarButtonItem) {
@@ -104,13 +107,15 @@ class AddChannelTableViewController: UITableViewController {
     private func uploadAvatarIcon(_ image: UIImage) {
         let fileDirectory = "Avatars/" + "_\(channelId)" + ".jpg"
         FileStorage.saveFileLocally(fileData: image.jpegData(compressionQuality: 1.0)! as NSData, fileName: channelId)
-        FileStorage.uploadImage(image, directory: fileDirectory) { (avatarLink) in
+        FileStorage.uploadImage(image, directory: fileDirectory) { [weak self](avatarLink) in
+            guard let self = self else { return }
             self.avatarLink = avatarLink ?? ""
         }
     }
     func setAvatar(avatarLink: String) {
         if avatarLink != "" {
-            FileStorage.downloadImage(imageUrl: avatarLink) { (avatarImage) in
+            FileStorage.downloadImage(imageUrl: avatarLink) {[weak self] (avatarImage) in
+                guard let self = self else { return }
                 DispatchQueue.main.async {
                     self.avatarImageView.image = avatarImage?.circleMasked
                 }
@@ -120,6 +125,7 @@ class AddChannelTableViewController: UITableViewController {
             self.avatarImageView.image = UIImage(named: AVATAR_DEFAULT_IMAGE)
         }
     }
+    
 }
 
 // MARK: - Extension
@@ -127,7 +133,8 @@ extension AddChannelTableViewController: GalleryControllerDelegate {
     func galleryController(_ controller: GalleryController, didSelectImages images: [Image]) {
         if images.count > 0 {
             //Convert to UIimage
-            images.first!.resolve { (icon) in
+            images.first!.resolve { [weak self](icon) in
+                guard let self = self else { return }
                 if icon != nil {
                     //upload image
                     self.uploadAvatarIcon(icon!)

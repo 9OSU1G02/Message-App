@@ -81,7 +81,9 @@ class ChatViewController: MessagesViewController {
         listenForNewChats()
         listenforReadStatusChange()
     }
-    
+    deinit {
+        print("Deinit chat view controller")
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         FirebaseRecentListener.shared.resetRecentCounter(chatRoomId: chatRoomId)
@@ -215,14 +217,17 @@ class ChatViewController: MessagesViewController {
         messageInputBar.inputTextView.resignFirstResponder()
         let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let takePhotoOrVideo = UIAlertAction(title: "Camera", style: .default) {[weak self] (alert) in
-            self?.showImageGallery(camera: true)
+            guard let self = self else { return }
+            self.showImageGallery(camera: true)
         }
         let shareMedia = UIAlertAction(title: "Library", style: .default) {[weak self] (alert) in
-            self?.showImageGallery(camera: false)
+            guard let self = self else { return }
+            self.showImageGallery(camera: false)
         }
         let shareLocation = UIAlertAction(title: "Share Location", style: .default) {[weak self] (alert) in
+            guard let self = self else { return }
             if let _ = LocationManager.shared.currentLocation {
-                self?.messageSend(text: nil, photo: nil, video: nil, audio: nil, location: LOCATION)
+                self.messageSend(text: nil, photo: nil, video: nil, audio: nil, location: LOCATION)
             }
             else {
                 ProgressHUD.showError("no access to location")
@@ -259,8 +264,9 @@ class ChatViewController: MessagesViewController {
     // MARK: - Update Typing indicator
     func createTypingObserver() {
         FirebaseTypingListener.shared.createTypingObserver(chatRoomId: chatRoomId) {[weak self] (isTyping) in
+            guard let self = self else { return }
             DispatchQueue.main.async {
-                self?.updateTypingIndicator(isTyping)
+                self.updateTypingIndicator(isTyping)
             }
         }
     }
@@ -310,7 +316,8 @@ class ChatViewController: MessagesViewController {
         let attachButton = InputBarButtonItem()
         attachButton.image = UIImage(systemName: "plus.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 30))
         attachButton.setSize(CGSize(width: 30, height: 30), animated: true)
-        attachButton.onTouchUpInside { (item) in
+        attachButton.onTouchUpInside { [weak self] (item) in
+            guard let self = self else { return }
             // Show Action sheet
             self.actionAttachButton()
         }
@@ -374,9 +381,10 @@ class ChatViewController: MessagesViewController {
         if allLocalMessage.isEmpty {
             FirebaseMessageListener.shared.checkForOldChat(User.currentId, collectionId: chatRoomId)
         }
-        //add observe to allLocalMessage , if new massage send or recived , that message will save in realm and call allLocalMessage = realm.objects(LocalMessage.self).filter(predicate).sorted(byKeyPath: DATE,ascending: true) again to get all message in realm an assgin to allLocalMessage
-        notificationToken = allLocalMessage.observe({ (changes: RealmCollectionChange) in
-            //Code will run when something change in realm
+        //add observe to allLocalMessage, if new massage send or recived , that message will save in realm , because ealm provides you with live objects so allLocalMessage will also have new massage send or recived
+        notificationToken = allLocalMessage.observe({[weak self] (changes: RealmCollectionChange) in
+            guard let self = self else { return }
+            //Code will run when something change in allLocalMessage
             switch changes {
             //Trigger when some thing query to out database ( user enter chat room)
             case .initial(_):
@@ -498,9 +506,10 @@ extension ChatViewController: GalleryControllerDelegate {
         if images.count > 0 {
             //convert Image(class) to UIImage
             images.first!.resolve { [weak self] (image) in
+                guard let self = self else { return }
                 // Upload Image
                 if image != nil {
-                    self?.messageSend(text: nil, photo: image, video: nil, audio: nil, location: nil)
+                    self.messageSend(text: nil, photo: image, video: nil, audio: nil, location: nil)
                 }
                 else {
                     ProgressHUD.showError("Couldnt select image!")

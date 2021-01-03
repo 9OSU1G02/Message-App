@@ -9,8 +9,9 @@ import UIKit
 import Firebase
 import GoogleSignIn
 @main
+
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    
+    //#error("Fix memory leak, fix login normal, fix notification when wrong or not cofrom login")
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FirebaseApp.configure()

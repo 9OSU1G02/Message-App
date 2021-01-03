@@ -50,6 +50,9 @@ class ForgotPasswordViewController: UIViewController {
     func configureUI() {
         emailTextField.configTextField(leftTextfieldImage: UIImageView(image: #imageLiteral(resourceName: "ic_mail")))
     }
+    deinit {
+        print("Deinit ForgotViewController")
+    }
 }
 
 extension ForgotPasswordViewController: AuthenticationFormCheck {

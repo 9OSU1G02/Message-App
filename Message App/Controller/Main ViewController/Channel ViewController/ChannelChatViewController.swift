@@ -22,7 +22,9 @@ class ChannelChatViewController: MessagesViewController {
         return view
     }()
     
-    
+    deinit {
+        print("Deinit channel chat view")
+    }
 
     private var chatRoomId = ""
     var recepientId = ""
@@ -116,7 +118,8 @@ class ChannelChatViewController: MessagesViewController {
         let attachButton = InputBarButtonItem()
         attachButton.image = UIImage(systemName: "plus.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 30))
         attachButton.setSize(CGSize(width: 30, height: 30), animated: true)
-        attachButton.onTouchUpInside { (item) in
+        attachButton.onTouchUpInside {[weak self] (item) in
+            guard let self = self else { return }
             //Show actionSheet
             self.actionAttachButton()
         }
@@ -170,7 +173,8 @@ class ChannelChatViewController: MessagesViewController {
             checkForOldChats()
         }
         //Observer realm data
-        notificationToken = allLocalMessage.observe({ (changes: RealmCollectionChange) in
+        notificationToken = allLocalMessage.observe({[weak self] (changes: RealmCollectionChange) in
+            guard let self = self else { return }
             //Code will run when something change in database
             switch changes {
             //Trigger when some thing query to out database
@@ -310,13 +314,16 @@ class ChannelChatViewController: MessagesViewController {
         //Hide the keyboard when show actionSheet
         messageInputBar.inputTextView.resignFirstResponder()
         let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let takePhotoOrVideo = UIAlertAction(title: "Camera", style: .default) { (alert) in
+        let takePhotoOrVideo = UIAlertAction(title: "Camera", style: .default) {[weak self] (alert) in
+            guard let self = self else { return }
             self.showImageGallery(camera: true)
         }
-        let shareMedia = UIAlertAction(title: "Library", style: .default) { (alert) in
+        let shareMedia = UIAlertAction(title: "Library", style: .default) { [weak self] (alert) in
+            guard let self = self else { return }
             self.showImageGallery(camera: false)
         }
-        let shareLocation = UIAlertAction(title: "Share Location", style: .default) { (alert) in
+        let shareLocation = UIAlertAction(title: "Share Location", style: .default) { [weak self] (alert) in
+            guard let self = self else { return }
             if let _ = LocationManager.shared.currentLocation {
                 self.messageSend(text: nil, photo: nil, video: nil, audio: nil, location: LOCATION)
             }

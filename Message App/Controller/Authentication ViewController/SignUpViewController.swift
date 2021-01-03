@@ -28,11 +28,12 @@ class SignUpViewController: UIViewController {
         if let email = emailTextField.text, let password = passwordTextField.text, let repeatPassword = repeatPasswordTexiField.text {
             if password == repeatPassword {
                 FirebaseUserListener.shared.registerUserWith(email: email, password: password) { [weak self](error) in
+                    guard let self = self else { return }
                     if let error = error {
                         ProgressHUD.showError(error.localizedDescription)
                     }
                     else {
-                        self?.navigationController?.popViewController(animated: true)
+                        self.navigationController?.popViewController(animated: true)
                     }
                 }
             }
@@ -66,6 +67,9 @@ class SignUpViewController: UIViewController {
         emailTextField.configTextField(leftTextfieldImage: UIImageView(image: #imageLiteral(resourceName: "ic_mail")))
         passwordTextField.configTextField(leftTextfieldImage: UIImageView(image: #imageLiteral(resourceName: "Key")))
         repeatPasswordTexiField.configTextField(leftTextfieldImage: UIImageView(image: #imageLiteral(resourceName: "Key")))
+    }
+    deinit {
+        print("Deinit signupViewController")
     }
 }
 

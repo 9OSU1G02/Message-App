@@ -58,4 +58,7 @@ class UserProfileTableViewController: UITableViewController {
             }
         }
     }
+    deinit {
+        print("Deinit UserProfile")
+    }
 }

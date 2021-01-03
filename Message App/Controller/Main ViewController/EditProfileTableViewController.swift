@@ -26,7 +26,9 @@ class EditProfileTableViewController: UITableViewController {
         showImageGallery()
     }
     
-    
+    deinit {
+        print("Deinit Edit Profile Viewcontroller")
+    }
     @IBAction func saveButtonPressed(_ sender: UIBarButtonItem) {
         if var user = User.currentUser, let username = usernameTextField.text {
             user.username = username
@@ -45,7 +47,8 @@ class EditProfileTableViewController: UITableViewController {
             if user.avatarLink != "" {
                 // set avatar
                 FileStorage.downloadImage(imageUrl: user.avatarLink) {[weak self] (avatarImage) in
-                    self?.avatarImage.image = avatarImage?.circleMasked
+                    guard let self = self else { return }
+                    self.avatarImage.image = avatarImage?.circleMasked
                 }
             }
         }
@@ -101,10 +104,11 @@ extension EditProfileTableViewController: GalleryControllerDelegate {
         if images.count > 0 {
             //convert Image(class) to UIImage
             images.first!.resolve { [weak self](avatarUIImage) in
+                guard let self = self else { return }
                 // Upload Image
                 if avatarUIImage != nil {
-                    self?.uploadAvatarImage(avatarUIImage!)
-                    self?.avatarImage.image = avatarUIImage?.circleMasked
+                    self.uploadAvatarImage(avatarUIImage!)
+                    self.avatarImage.image = avatarUIImage?.circleMasked
                 }
                 else {
                     ProgressHUD.showError("Couldnt select image!")

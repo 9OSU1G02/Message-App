@@ -36,6 +36,11 @@ class LoginViewController: UIViewController {
         configureGoogleSignIN()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(true)
+        emailTextFiled.removeTarget(self, action: nil, for: .editingChanged)
+        passwordTextField.removeTarget(self, action: nil, for: .editingChanged)
+    }
     // MARK: - IBActions
     
     @IBAction func textEntrySecurityButtonPressed(_ sender: UIButton) {
@@ -49,24 +54,13 @@ class LoginViewController: UIViewController {
     
     @IBAction func loginButtonPressed(_ sender: UIButton) {
         if let email = emailTextFiled.text, let password = passwordTextField.text {
-            FirebaseUserListener.shared.loginUserWith(email: email, password: password) { (error, isEmailVerified) in
-                if let error = error {
-                    ProgressHUD.showFailed(error.localizedDescription)
-                }
-                else {
-                    if isEmailVerified {
-                        // TODO: - Go to main view
+            FirebaseUserListener.shared.loginUserWith(email: email, password: password) { [weak self] in
+                guard let self = self else { return}
+                    // TODO: - Go to main view
                         self.goToMainView()
                         FirebaseRecentListener.shared.updateIsReceiverOnline(false)
-                    }
-                    else {
-                        ProgressHUD.showFailed("Please verify email")
-                        self.resentEmailButtonLabel.isHidden = false
-                    }
-                }
             }
         }
-        
     }
     
     @IBAction func loginWithGoogleButtonPressed(_ sender: UIButton) {
@@ -130,7 +124,7 @@ class LoginViewController: UIViewController {
     func configureNotificationObservers() {
         emailTextFiled.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
         passwordTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
-    }
+        }
     
     func configureUI() {
         navigationController?.navigationBar.isHidden = true
@@ -152,6 +146,10 @@ class LoginViewController: UIViewController {
         let mainView = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: MAIN_VIEW_STORYBOARD_ID) as! UITabBarController
         mainView.modalPresentationStyle = .fullScreen
         present(mainView, animated: true, completion: nil)
+    }
+    
+    deinit {
+        print("Deinit loginViewController")
     }
 }
 
@@ -182,7 +180,8 @@ extension LoginViewController: GIDSignInDelegate {
         if user == nil {
             return
         }
-        FirebaseUserListener.shared.signInWithGoogle(signIn, didSignInFor: user, withError: error) { (error) in
+        FirebaseUserListener.shared.signInWithGoogle(signIn, didSignInFor: user, withError: error) { [weak self](error) in
+            guard let self = self else { return }
             if let error = error {
                 ProgressHUD.showError(error.localizedDescription)
                 return
@@ -192,4 +191,5 @@ extension LoginViewController: GIDSignInDelegate {
             FirebaseRecentListener.shared.updateIsReceiverOnline(true)
         }
     }
+    
 }

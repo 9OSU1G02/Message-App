@@ -16,6 +16,7 @@ class FirebaseUserListener {
     // MARK: - Registration
     func registerUserWith(email: String, password: String, completion: @escaping (_ error: Error?) -> Void) {
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] (result, error) in
+            guard let self = self else { return }
             guard let result = result else {
                 ProgressHUD.showError(error?.localizedDescription)
                 return
@@ -33,7 +34,7 @@ class FirebaseUserListener {
             }
             //Create user and save it to firestore
             let user = User(id: result.user.uid, username: email, email: email, status: "Available", avatarLink: "", hasSeenOnboard: false)
-            self?.saveUserToFirestore(user)
+            self.saveUserToFirestore(user)
         }
     }
     
@@ -55,15 +56,15 @@ class FirebaseUserListener {
     }
     
     // MARK: - Login with email
-    func loginUserWith(email: String, password: String, completion: @escaping (_ error:Error?, _ isEmailVerified: Bool) -> Void) {
+    func loginUserWith(email: String, password: String, completion: @escaping () -> Void) {
         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
             guard let result = result, result.user.isEmailVerified else {
+                ProgressHUD.showFailed(error?.localizedDescription ?? "Email is not Verified", interaction: false)
                 return
             }
             //Email is verified
             FirebaseUserListener.shared.downLoadUserFromFirestore(userId: result.user.uid)
-            completion(error,true)
-            
+            completion()
         }
     }
     
@@ -87,7 +88,8 @@ class FirebaseUserListener {
         guard let authentication = user.authentication else { return }
         let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
                                                        accessToken: authentication.accessToken)
-        Auth.auth().signIn(with: credential) { (result, error) in
+        Auth.auth().signIn(with: credential) {[weak self] (result, error) in
+            guard let self = self else { return }
             guard let result = result else {
                 completion(error)
                 ProgressHUD.showError(error?.localizedDescription)
