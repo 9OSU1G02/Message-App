@@ -12,7 +12,8 @@ class SignUpViewController: UIViewController {
     
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
-    @IBOutlet weak var repeatPasswordTexiField: UITextField!
+    @IBOutlet weak var repeatPasswordTextField: UITextField!
+    @IBOutlet weak var phoneNumberTextField: UITextField!
     @IBOutlet weak var signUpButtonLabel: UIButton!
     
     override func viewDidLoad() {
@@ -25,9 +26,9 @@ class SignUpViewController: UIViewController {
     // MARK: - IBActions
     
     @IBAction func signUpButtonPressed(_ sender: UIButton) {
-        if let email = emailTextField.text, let password = passwordTextField.text, let repeatPassword = repeatPasswordTexiField.text {
+        if let email = emailTextField.text, let password = passwordTextField.text, let repeatPassword = repeatPasswordTextField.text, let phoneNumber = phoneNumberTextField.text {
             if password == repeatPassword {
-                FirebaseUserListener.shared.registerUserWith(email: email, password: password) { [weak self](error) in
+                FirebaseUserListener.shared.registerUserWith(email: email, password: password, phoneNunber: phoneNumber) { [weak self](error) in
                     guard let self = self else { return }
                     if let error = error {
                         ProgressHUD.showError(error.localizedDescription)
@@ -60,13 +61,15 @@ class SignUpViewController: UIViewController {
     func configureNotificationObservers() {
         emailTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
         passwordTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
-        repeatPasswordTexiField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
+        repeatPasswordTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
+        phoneNumberTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
     }
     
     private func configureUI() {
         emailTextField.configTextField(leftTextfieldImage: UIImageView(image: #imageLiteral(resourceName: "ic_mail")))
         passwordTextField.configTextField(leftTextfieldImage: UIImageView(image: #imageLiteral(resourceName: "Key")))
-        repeatPasswordTexiField.configTextField(leftTextfieldImage: UIImageView(image: #imageLiteral(resourceName: "Key")))
+        repeatPasswordTextField.configTextField(leftTextfieldImage: UIImageView(image: #imageLiteral(resourceName: "Key")))
+        phoneNumberTextField.configTextField(leftTextfieldImage: UIImageView(image: #imageLiteral(resourceName: "business")))
     }
     deinit {
         print("Deinit signupViewController")
@@ -87,6 +90,6 @@ extension SignUpViewController: AuthenticationFormCheck {
     }
             
     func checkFormIsValid() -> Bool {
-        return emailTextField.text != "" && passwordTextField.text != "" && repeatPasswordTexiField.text != ""
+        return emailTextField.text != "" && passwordTextField.text != "" && repeatPasswordTextField.text != "" && phoneNumberTextField.text != ""
     }
 }

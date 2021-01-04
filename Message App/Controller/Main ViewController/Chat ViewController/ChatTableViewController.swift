@@ -112,13 +112,11 @@ class ChatTableViewController: UITableViewController {
     
     //MARK: - UIScrollViewDelegate
     override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-
         if self.refreshControl!.isRefreshing {
             isRefresh = true
             self.downloadRecentChats()
             self.refreshControl!.endRefreshing()
-            
-        }
+                    }
     }
 }
 
