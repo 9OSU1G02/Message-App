@@ -12,9 +12,9 @@ struct User: Codable, Equatable {
     var username: String
     var email: String
     var status: String
-    var phoneNumber: String
     var avatarLink = ""
-    var isOnline = false
+    
+    
     static var currentId: String {
         return Auth.auth().currentUser?.uid ?? ""
     }
@@ -51,15 +51,15 @@ func saveUserLocally(_ user: User) {
     }
 }
 
-//func createDummyUsers() {
-//    print("Creteating dummy user")
-//    let names = ["Huy","Hung","Dung","Huong","Duong"]
-//    for i in 0..<5 {
-//        let id = UUID().uuidString
-//        let fileDictory = "Avatars/" + "_\(id)" + ".jgp"
-//        FileStorage.uploadImage(UIImage(named: "user\(i)")!, directory: fileDictory) { (avatarLink) in
-//            let user = User(id: id, username: names[i], email: "user\(i)@gmail.com", status: "Available", avatarLink: avatarLink!)
-//                FirebaseUserListener.shared.saveUserToFirestore(user)
-//        }
-//    }
-//}
+func createDummyUsers() {
+    print("Creteating dummy user")
+    let names = ["Huy","Hung","Dung","Huong","Duong"]
+    for i in 0..<5 {
+        let id = UUID().uuidString
+        let fileDictory = "Avatars/" + "_\(id)" + ".jgp"
+        FileStorage.uploadImage(UIImage(named: "user\(i)")!, directory: fileDictory) { (avatarLink) in
+            let user = User(id: id, username: names[i], email: "user\(i)@gmail.com", status: "Available", avatarLink: avatarLink!)
+                FirebaseUserListener.shared.saveUserToFirestore(user)
+        }
+    }
+}

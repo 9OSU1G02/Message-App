@@ -14,7 +14,7 @@ class FirebaseUserListener {
     static let shared = FirebaseUserListener()
     
     // MARK: - Registration
-    func registerUserWith(email: String, password: String,phoneNunber: String, completion: @escaping (_ error: Error?) -> Void) {
+    func registerUserWith(email: String, password: String, completion: @escaping (_ error: Error?) -> Void) {
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] (result, error) in
             guard let self = self else { return }
             guard let result = result else {
@@ -33,7 +33,7 @@ class FirebaseUserListener {
                 }
             }
             //Create user and save it to firestore
-            let user = User(id: result.user.uid, username: email, email: email, status: "Available", phoneNumber: phoneNunber, avatarLink: "")
+            let user = User(id: result.user.uid, username: email, email: email, status: "Available", avatarLink: "")
             self.saveUserToFirestore(user)
         }
     }
@@ -66,7 +66,6 @@ class FirebaseUserListener {
     func logOut(completion: @escaping (_ error: Error?) -> Void) {
         do {
             FirebaseRecentListener.shared.updateIsReceiverOnline(false)
-            FirebaseUserListener.shared.updateIsUserOnline(false)
             try Auth.auth().signOut()
             USER_DEFAULT.removeObject(forKey: CURRENT_USER)
             completion(nil)
@@ -101,7 +100,7 @@ class FirebaseUserListener {
                     saveUserLocally(user)
                 }
                 else {
-                    let user = User(id: uid, username: username, email: email, status: "Available", phoneNumber: result.user.phoneNumber ?? "", avatarLink: "")
+                    let user = User(id: uid, username: username, email: email, status: "Available", avatarLink: "")
                     saveUserLocally(user)
                     self.saveUserToFirestore(user)
                 }
@@ -189,7 +188,8 @@ class FirebaseUserListener {
     }
     
     func downloadAllUserFromFireBase(completion: @escaping (_ allUsers: [User] )-> Void) {
-        FirebaseReference(.User).addSnapshotListener { (snapshot, error) in
+        
+        FirebaseReference(.User).getDocuments{ (snapshot, error) in
             var users : [User] = []
             guard let document = snapshot?.documents else {
                 print("No document in all Users")
@@ -207,27 +207,8 @@ class FirebaseUserListener {
             }
             completion(users)
         }
-//        FirebaseReference(.User).getDocuments{ (snapshot, error) in
-//            var users : [User] = []
-//            guard let document = snapshot?.documents else {
-//                print("No document in all Users")
-//                return
-//            }
-//            //Decode [QueryDocumentSnapshot] -> [User]
-//            let allUsers = document.compactMap { (queryDocumentSnapshot) -> User? in
-//                return try? queryDocumentSnapshot.data(as: User.self)
-//            }
-//            for user in allUsers {
-//                //Don't want append current user
-//                if User.currentId != user.id {
-//                    users.append(user)
-//                }
-//            }
-//            completion(users)
-//        }
     }
     
-    // MARK: - Download Image
     func avatarImageFromUser(userId: String, isRefresh:Bool ,completion: @escaping (_ avatarImage: UIImage, _ avatarLink: String ) -> Void ) {
         FirebaseReference(.User).document(userId).getDocument { (snapshot, error) in
             guard let document = snapshot else {
@@ -277,31 +258,6 @@ class FirebaseUserListener {
         }
     }
     
-    func updateIsUserOnline(_ isUserOnline: Bool) {
-        guard User.currentId != "" else { return}
-        FirebaseReference(.User).document(User.currentId).getDocument {[weak self] (snapshot, error) in
-            guard let self = self else { return }
-            guard let document = snapshot else {
-                print("No document for user")
-                return
-            }
-            let result = Result {
-                //Decode User JSON form firestore to User
-                try? document.data(as: User.self)
-            }
-            switch result {
-            case .success(let user):
-                if var user = user {
-                    user.isOnline = isUserOnline
-                    self.saveUserToFirestore(user)
-                    saveUserLocally(user)
-                }
-                else {
-                    print("User does not exits")
-                }
-            case .failure(let error):
-                print("Error decoding user", error)
-            }
-        }
-    }
+    //Encode user to JSON then save to UserDefault
+    
 }

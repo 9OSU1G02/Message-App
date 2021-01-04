@@ -50,7 +50,6 @@ class SettingsTableViewController: UITableViewController {
             }
             else {
                 FirebaseRecentListener.shared.updateIsReceiverOnline(false)
-                FirebaseUserListener.shared.updateIsUserOnline(false)
                 let loginVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "AuthNavitationController") as! UINavigationController
                 loginVC.modalPresentationStyle = .fullScreen
                 self?.present(loginVC, animated: true, completion: nil)

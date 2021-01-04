@@ -45,7 +45,7 @@ extension ChatViewController: MessagesDataSource {
             let message = mkMessages[indexPath.section]
             let status = indexPath.section == mkMessages.count - 1 ? message.status + " " + message.readDate.time() : ""
             let font = UIFont.boldSystemFont(ofSize: 10)
-            let color = UIColor.systemPink
+            let color = UIColor.blue
             return NSAttributedString(string: status, attributes: [.font : font, .foregroundColor : color])
         }
         return nil
@@ -56,7 +56,7 @@ extension ChatViewController: MessagesDataSource {
     func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
             if indexPath.section !=  mkMessages.count - 1 {
             let font = UIFont.boldSystemFont(ofSize: 10)
-            let color = UIColor.systemIndigo
+            let color = UIColor.red
             return NSAttributedString(string: message.sentDate.time(), attributes: [.font : font, .foregroundColor : color])
         }
         return nil
@@ -97,7 +97,7 @@ extension ChannelChatViewController: MessagesDataSource {
     func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
             if indexPath.section !=  mkMessages.count - 1 {
             let font = UIFont.boldSystemFont(ofSize: 10)
-            let color = UIColor.systemIndigo
+            let color = UIColor.red
             return NSAttributedString(string: message.sentDate.time(), attributes: [.font : font, .foregroundColor : color])
         }
         return nil

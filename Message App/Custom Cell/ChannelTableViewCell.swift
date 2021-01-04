@@ -30,7 +30,7 @@ class ChannelTableViewCell: UITableViewCell {
     func configure(channel: Channel) {
         nameLabel.text = channel.name
         aboutLabel.text = channel.aboutChannel
-        memeberCountLabel.text = "\(channel.memberIds.count) members"
+        memeberCountLabel.text = "\(channel.memberIds.count)"
         //Time elapsed since last message was send
         lastMessageDateLabel.text = timeElapsed(channel.lastMessageDate ?? Date())
         lastMessageDateLabel.adjustsFontSizeToFitWidth = true

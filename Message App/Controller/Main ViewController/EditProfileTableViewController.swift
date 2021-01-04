@@ -18,7 +18,6 @@ class EditProfileTableViewController: UITableViewController {
     @IBOutlet weak var avatarImage: UIImageView!
     @IBOutlet weak var usernameTextField: UITextField!
     @IBOutlet weak var statusTextField: UITextField!
-    @IBOutlet weak var phoneNumberTextField: UITextField!
     
     
     // MARK: - IbActions
@@ -31,19 +30,11 @@ class EditProfileTableViewController: UITableViewController {
         print("Deinit Edit Profile Viewcontroller")
     }
     @IBAction func saveButtonPressed(_ sender: UIBarButtonItem) {
-        if var user = User.currentUser,
-           let username = usernameTextField.text, username != "",
-           let phoneNumber = phoneNumberTextField.text, phoneNumber != "" {
+        if var user = User.currentUser, let username = usernameTextField.text {
             user.username = username
             user.status = statusTextField.text ?? ""
-            user.phoneNumber = phoneNumber
             saveUserLocally(user)
-            FirebaseUserListener.shared.saveUserToFirestore(user)
-            FirebaseRecentListener.shared.updateRececiverInfomationOfRecent(user)
-        }
-        else {
-            ProgressHUD.showFailed("Usename and Phone Number must fullfil")
-            return
+            FirebaseUserListener.shared.saveUserToFirestore(user )
         }
         navigationController?.popViewController(animated: true)
     }
@@ -53,7 +44,6 @@ class EditProfileTableViewController: UITableViewController {
         if let user = User.currentUser {
             usernameTextField.text = user.username
             statusTextField.text = user.status
-            phoneNumberTextField.text = user.phoneNumber
             if user.avatarLink != "" {
                 // set avatar
                 FileStorage.downloadImage(imageUrl: user.avatarLink) {[weak self] (avatarImage) in

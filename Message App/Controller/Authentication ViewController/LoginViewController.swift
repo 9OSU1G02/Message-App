@@ -18,6 +18,8 @@ protocol AuthenticationFormCheck {
 class LoginViewController: UIViewController {
     // MARK: - Properties
     
+    
+    
     // MARK: - IBOutlet
     @IBOutlet weak var emailTextFiled: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
@@ -54,10 +56,9 @@ class LoginViewController: UIViewController {
         if let email = emailTextFiled.text, let password = passwordTextField.text {
             FirebaseUserListener.shared.loginUserWith(email: email, password: password) { [weak self] in
                 guard let self = self else { return}
-                // TODO: - Go to main view
-                self.goToMainView()
-                FirebaseRecentListener.shared.updateIsReceiverOnline(true)
-                FirebaseUserListener.shared.updateIsUserOnline(true)
+                    // TODO: - Go to main view
+                        self.goToMainView()
+                        FirebaseRecentListener.shared.updateIsReceiverOnline(true)
             }
         }
     }
@@ -123,7 +124,7 @@ class LoginViewController: UIViewController {
     func configureNotificationObservers() {
         emailTextFiled.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
         passwordTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
-    }
+        }
     
     func configureUI() {
         navigationController?.navigationBar.isHidden = true
@@ -188,7 +189,6 @@ extension LoginViewController: GIDSignInDelegate {
             // TODO: - Go to main view
             self.goToMainView()
             FirebaseRecentListener.shared.updateIsReceiverOnline(true)
-            FirebaseUserListener.shared.updateIsUserOnline(true)
         }
     }
     
