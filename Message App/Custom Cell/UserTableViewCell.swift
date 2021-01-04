@@ -22,6 +22,7 @@ class UserTableViewCell: UITableViewCell {
     @IBOutlet weak var avatarImage: UIImageView!
     @IBOutlet weak var usernameLabel: UILabel!
     @IBOutlet weak var statusLabel: UILabel!
+    @IBOutlet weak var userOnlineImageView: UIImageView!
     
     func configure(user: User){
         usernameLabel.text = user.username
@@ -32,6 +33,13 @@ class UserTableViewCell: UITableViewCell {
                 FirebaseReference(.User).document(user.id).updateData(["avatarLink" : avatarLink])
         }
         isRefresh = false
+        if user.isOnline {
+            userOnlineImageView.image = UIImage(named: "green")!.circleMasked
+            userOnlineImageView.isHidden = false
+        }
+        else {
+            userOnlineImageView.isHidden = true
+        }
     }
     
     func setAvatar(avatarLink: String) {

@@ -19,9 +19,11 @@ class UserProfileTableViewController: UITableViewController {
     
     // MARK: - IBOutlets
     
+    @IBOutlet weak var userOnlineImageView: UIImageView!
     @IBOutlet weak var avatarImage: UIImageView!
     @IBOutlet weak var usernameLabel: UILabel!
     @IBOutlet weak var statusLabel: UILabel!
+    @IBOutlet weak var phoneNumberLabel: UILabel!
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let header = UIView()
@@ -33,14 +35,23 @@ class UserProfileTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.section == 1 {
+        guard let user = user else { return}
+        if indexPath.section == 1 && indexPath.row == 0{
             // Go to chat room
-            if let currentUser = User.currentUser, let user2 = user {
+            if let currentUser = User.currentUser{
+                let user2 = user
                 let chatRoomId = startChat(user1: currentUser, user2: user2)
-                let privateChatView = ChatViewController(chatRoomId: chatRoomId, recepientId: user!.id, recipientName: user!.username)
+                let privateChatView = ChatViewController(chatRoomId: chatRoomId, recepientId: user.id, recipientName: user.username)
                 privateChatView.hidesBottomBarWhenPushed = true
                 navigationController?.pushViewController(privateChatView, animated: true)
             }
+        }
+        else if indexPath.section == 1 && indexPath.row == 1 {
+            guard let url = URL(string: "TEL://\(user.phoneNumber)") else {
+                print("Cant create url phone number")
+                return
+            }
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
     
@@ -51,10 +62,18 @@ class UserProfileTableViewController: UITableViewController {
             title = user.username
             usernameLabel.text = user.username
             statusLabel.text = user.status
+            phoneNumberLabel.text = user.phoneNumber
             if user.avatarLink != "" {
                 FileStorage.downloadImage(imageUrl: user.avatarLink) { [weak self](avatarImage) in
                     self?.avatarImage.image = avatarImage?.circleMasked
                 }
+            }
+            if user.isOnline {
+                userOnlineImageView.image = UIImage(named: "green")!.circleMasked
+                userOnlineImageView.isHidden = false
+            }
+            else {
+                userOnlineImageView.isHidden = true
             }
         }
     }
@@ -62,3 +81,5 @@ class UserProfileTableViewController: UITableViewController {
         print("Deinit UserProfile")
     }
 }
+
+

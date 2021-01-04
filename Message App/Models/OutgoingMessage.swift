@@ -42,7 +42,7 @@ class OutgoingMessage {
             sendAudioMessage(message: message, memberIDs: memberIds, audioFileName: audio, audioDuration: audioDuration)
         }
         // Update recent
-        FirebaseRecentListener.shared.updateRecents(chatRoomId: chatRoomId, lastMessage: message.message)
+        FirebaseRecentListener.shared.updateRecentsWithMessage(chatRoomId: chatRoomId, lastMessage: message.message)
     }
     
     class func sendMessage(message: LocalMessage, memberIds: [String]) {
