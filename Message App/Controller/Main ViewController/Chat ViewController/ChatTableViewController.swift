@@ -49,6 +49,7 @@ class ChatTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
+    
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // If user use search then delete row -> recent object in filterRecents

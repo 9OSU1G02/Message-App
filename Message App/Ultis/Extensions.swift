@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import ProgressHUD
 import MapKit
+import SafariServices
 extension UIView {
     func anchor(top: NSLayoutYAxisAnchor? = nil,
                 left: NSLayoutXAxisAnchor? = nil,
@@ -128,6 +129,12 @@ extension UIViewController {
         view.endEditing(false)
     }
     
+    func presentSafariVC(url: URL) {
+        let safariVC = SFSafariViewController(url: url)
+        safariVC.preferredControlTintColor = .systemGreen
+        present(safariVC, animated: true, completion: nil)
+    }
+    
 }
 
 extension UIImage {
@@ -198,19 +205,19 @@ public extension MKMapView {
     //MARK: Map Conversion Methods
     
     private func longitudeToPixelSpaceX(longitude:Double)->Double{
-        return round(MERCATOR_OFFSET + MERCATOR_RADIUS * longitude * M_PI / DEGREES)
+        return round(MERCATOR_OFFSET + MERCATOR_RADIUS * longitude * Double.pi / DEGREES)
     }
     
     private func latitudeToPixelSpaceY(latitude:Double)->Double{
-        return round(MERCATOR_OFFSET - MERCATOR_RADIUS * log((1 + sin(latitude * M_PI / DEGREES)) / (1 - sin(latitude * M_PI / DEGREES))) / 2.0)
+        return round(MERCATOR_OFFSET - MERCATOR_RADIUS * log((1 + sin(latitude * Double.pi / DEGREES)) / (1 - sin(latitude * Double.pi / DEGREES))) / 2.0)
     }
     
     private func pixelSpaceXToLongitude(pixelX:Double)->Double{
-        return ((round(pixelX) - MERCATOR_OFFSET) / MERCATOR_RADIUS) * DEGREES / M_PI
+        return ((round(pixelX) - MERCATOR_OFFSET) / MERCATOR_RADIUS) * DEGREES / Double.pi
     }
     
     private func pixelSpaceYToLatitude(pixelY:Double)->Double{
-        return (M_PI / 2.0 - 2.0 * atan(exp((round(pixelY) - MERCATOR_OFFSET) / MERCATOR_RADIUS))) * DEGREES / M_PI
+        return (Double.pi / 2.0 - 2.0 * atan(exp((round(pixelY) - MERCATOR_OFFSET) / MERCATOR_RADIUS))) * DEGREES / Double.pi
     }
     
     private func coordinateSpanWithCenterCoordinate(centerCoordinate:CLLocationCoordinate2D, zoomLevel:Double)->MKCoordinateSpan{

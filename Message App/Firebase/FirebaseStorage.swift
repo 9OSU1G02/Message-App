@@ -44,7 +44,7 @@ class FileStorage {
     
     class func downloadImage(imageUrl: String, competion: @escaping (_ image: UIImage?) -> Void) {
         let imageFileName = fileNameFrom(fileUrl: imageUrl)
-        #warning("bug ather user will not get latest avatar of current user because avatar file name == user id --> another user locally have avatar image with same name ---> remove fileExistAtPath ")
+        //warning("bug ather user will not get latest avatar of current user because avatar file name == user id --> another user locally have avatar image with same name ---> remove fileExistAtPath ")
         //If image in locally then don't have to download from Firebase
         if fileExistAtPath(path: imageFileName) {
             // get data locally and convert to UIImage

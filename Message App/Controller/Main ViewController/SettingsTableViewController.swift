@@ -42,6 +42,13 @@ class SettingsTableViewController: UITableViewController {
     
     
     // MARK: - IBActions
+    @IBAction func tellAFriendButtonPressed(_ sender: UIButton) {
+        let ac = UIActivityViewController(activityItems: [APP_URL], applicationActivities: nil)
+        present(ac, animated: true)
+    }
+    @IBAction func goToGitHubButtonPress(_ sender: UIButton) {
+        presentSafariVC(url: APP_URL)
+    }
     
     @IBAction func logOutButtonPressed(_ sender: UIButton) {
         FirebaseUserListener.shared.logOut { [weak self](error) in

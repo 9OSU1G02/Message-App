@@ -43,5 +43,7 @@ let MEMBER_IDS = "memberIds"
 let ABOUT_CHANNEL_VIEW_STORYBOARD_ID = "aboutChannelView"
 let CELL_CHANNEL = "channelCell"
 let MY_CHANNEL_CELL = "myChannelCell"
-
-
+let SIGN_IN_METHOD = "method"
+let ID_TOKEN = "idToken"
+let ACCESSTOKEN = "accessToken"
+let APP_URL = URL(string: "https://github.com/9OSU1G02/Message-App")!

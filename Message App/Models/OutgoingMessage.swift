@@ -35,7 +35,7 @@ class OutgoingMessage {
         if let  video = video {
             sendVideoMessage(message: message, video: video, memberIDs: memberIds)
         }
-        if let location = location {
+        if let _ = location {
             sendLocationMessage(message: message, memberIDs: memberIds)
         }
         if let audio = audio {

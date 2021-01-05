@@ -161,7 +161,7 @@ class ChatViewController: MessagesViewController {
         //Insert message new max message right after old minMessage
         mkMessages.insert(incoming.createMessage(localMessage: localMessage)!, at: 0)
         
-        #warning("increase displayingMessagesCount every time 1 message is display")
+        //warning("increase displayingMessagesCount every time 1 message is display")
         displayingMessagesCount += 1
     }
     
@@ -439,7 +439,7 @@ class ChatViewController: MessagesViewController {
         let incoming  = IncomingMessage(_collectionView: self)
         mkMessages.append(incoming.createMessage(localMessage: localMessage)!)
         
-        #warning("increase displayingMessagesCount every time 1 message is display")
+        //warning("increase displayingMessagesCount every time 1 message is display")
         displayingMessagesCount += 1
     }
     // MARK: - Audio Messages

@@ -13,6 +13,7 @@
 		B61DF23B2547D7190085751E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B61DF2392547D7190085751E /* Main.storyboard */; };
 		B61DF23D2547D71B0085751E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B61DF23C2547D71B0085751E /* Assets.xcassets */; };
 		B61DF2402547D71B0085751E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B61DF23E2547D71B0085751E /* LaunchScreen.storyboard */; };
+		B67212BE25A330630086F5B2 /* ChangePasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67212BD25A330630086F5B2 /* ChangePasswordViewController.swift */; };
 		B6C524BC254EA5C3003D6031 /* AudioMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C524BB254EA5C3003D6031 /* AudioMessage.swift */; };
 		B6C524BF254EA832003D6031 /* BasicAudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C524BE254EA832003D6031 /* BasicAudioController.swift */; };
 		B6C61836254BC96C00FF9491 /* MessageCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C61835254BC96C00FF9491 /* MessageCellDelegate.swift */; };
@@ -79,6 +80,7 @@
 		B61DF23C2547D71B0085751E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B61DF23F2547D71B0085751E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B61DF2412547D71B0085751E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B67212BD25A330630086F5B2 /* ChangePasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordViewController.swift; sourceTree = "<group>"; };
 		B6C524BB254EA5C3003D6031 /* AudioMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioMessage.swift; sourceTree = "<group>"; };
 		B6C524BE254EA832003D6031 /* BasicAudioController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicAudioController.swift; sourceTree = "<group>"; };
 		B6C61835254BC96C00FF9491 /* MessageCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCellDelegate.swift; sourceTree = "<group>"; };
@@ -271,6 +273,7 @@
 				B61DF2372547D7190085751E /* LoginViewController.swift */,
 				B6D1BA8B254816D200CECA47 /* SignUpViewController.swift */,
 				B6D1BA8F254816E300CECA47 /* ForgotPasswordViewController.swift */,
+				B67212BD25A330630086F5B2 /* ChangePasswordViewController.swift */,
 			);
 			path = "Authentication ViewController";
 			sourceTree = "<group>";
@@ -520,6 +523,7 @@
 				B61DF2362547D7190085751E /* SceneDelegate.swift in Sources */,
 				B6C61836254BC96C00FF9491 /* MessageCellDelegate.swift in Sources */,
 				B6CC0F212549BB5C00CE1E07 /* FirebaseStorage.swift in Sources */,
+				B67212BE25A330630086F5B2 /* ChangePasswordViewController.swift in Sources */,
 				B6C524BF254EA832003D6031 /* BasicAudioController.swift in Sources */,
 				B6CCF5C7254E6316007B10C6 /* LocationMessage.swift in Sources */,
 				B6CC0F282549C77300CE1E07 /* EditProfileTableViewController.swift in Sources */,

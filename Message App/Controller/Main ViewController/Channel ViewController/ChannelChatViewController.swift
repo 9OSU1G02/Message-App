@@ -232,7 +232,7 @@ class ChannelChatViewController: MessagesViewController {
         let incoming  = IncomingMessage(_collectionView: self)
         mkMessages.append(incoming.createMessage(localMessage: localMessage)!)
         
-        #warning("increase displayingMessagesCount every time 1 message is display")
+        //("increase displayingMessagesCount every time 1 message is display")
         displayingMessagesCount += 1
     }
     
@@ -287,7 +287,7 @@ class ChannelChatViewController: MessagesViewController {
          Max*/
         mkMessages.insert(incoming.createMessage(localMessage: localMessage)!, at: 0)
         
-        #warning("increase displayingMessagesCount every time 1 message is display")
+        //warning("increase displayingMessagesCount every time 1 message is display")
         displayingMessagesCount += 1
     }
     private func markMessageAsRead(_ localMessage: LocalMessage) {

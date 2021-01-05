@@ -10,6 +10,43 @@ import Firebase
 import ProgressHUD
 import GoogleSignIn
 import FirebaseFirestoreSwift
+enum UserDefaultError: String, Error {
+    case unableToGetSignInMethod = "Unable to get Sign In method from User Default"
+    case unableToGetIdToken = "Unable to get Id Token from User Default"
+    case unableToGetAccessToken = "Unable to get Access Token from User Default"
+}
+enum SignInMethod: String {
+    case email
+    case google
+    
+    static func saveSignInMethod(_ method: SignInMethod) {
+        UserDefaults.standard.set(method.rawValue, forKey: SIGN_IN_METHOD)
+    }
+    
+    static func getSignInMethod(completed: (Result<SignInMethod,UserDefaultError>) -> Void){
+        guard let rawValue = UserDefaults.standard.string(forKey: SIGN_IN_METHOD), let method = SignInMethod(rawValue: rawValue) else {
+            completed(.failure(.unableToGetSignInMethod))
+            return
+        }
+        completed(.success(method))
+    }
+    
+    static func saveIdAndAccessToken(id: String, access: String) {
+        UserDefaults.standard.set(id, forKey: ID_TOKEN)
+        UserDefaults.standard.set(access, forKey: ACCESSTOKEN)
+    }
+    
+    static func getIdTokenAndAccessToken(completed: @escaping (Result<[String],UserDefaultError>) -> Void) {
+        guard let idToken = UserDefaults.standard.string(forKey: ID_TOKEN),
+              let accessToken = UserDefaults.standard.string(forKey: ID_TOKEN)
+        else {
+            completed(.failure(.unableToGetIdToken))
+            return
+        }
+        completed(.success([idToken,accessToken]))
+    }
+
+}
 class FirebaseUserListener {
     static let shared = FirebaseUserListener()
     
@@ -38,24 +75,25 @@ class FirebaseUserListener {
         }
     }
     
+    // SendEmailVerificationCallback ~= (Error?) -> Void
     func reSendEmailVerification(email: String, completion: @escaping SendEmailVerificationCallback) {
-        
         Auth.auth().currentUser?.sendEmailVerification(completion: completion)
-        
     }
     
-    func resetPasswordFor(email: String, completion: @escaping SendPasswordResetCallback) {
+    // SendPasswordResetCallback ~= (Error?) -> Void
+    func resetPasswordFor(email: String, completion:  @escaping SendPasswordResetCallback) {
         Auth.auth().sendPasswordReset(withEmail: email, completion: completion)
     }
-            
+    
     // MARK: - Login with email
     func loginUserWith(email: String, password: String, completion: @escaping () -> Void) {
         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
             guard let result = result, result.user.isEmailVerified else {
-                ProgressHUD.showFailed(error?.localizedDescription ?? "Email is not Verified", interaction: false)
+                ProgressHUD.showError(error?.localizedDescription ?? "Email is not Verified", interaction: false)
                 return
             }
             //Email is verified
+            SignInMethod.saveSignInMethod(.email)
             FirebaseUserListener.shared.downLoadUserFromFirestore(userId: result.user.uid)
             completion()
         }
@@ -76,12 +114,55 @@ class FirebaseUserListener {
         }
     }
     
+    // MARK: - Change Password
+    func changePassword(signInMethod: SignInMethod,oldPassword: String = "", newPassword: String, completion: @escaping (Bool) -> Void) {
+        let user = Auth.auth().currentUser
+        var credential: AuthCredential
+        
+        switch signInMethod {
+        case .email:
+            credential = EmailAuthProvider.credential(withEmail: User.currentUser!.email, password: oldPassword)
+        case .google:
+            var idToken = ""
+            var accessToken = ""
+            //If user sign in with google we need get id token and access token to peform change password
+            SignInMethod.getIdTokenAndAccessToken { (result) in
+                switch result {
+                case .success(let token):
+                    idToken = token[0]
+                    accessToken = token[1]
+                case .failure(_):
+                    break
+                }
+            }
+            credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
+        }
+                 
+        user?.reauthenticate(with: credential) { result,error  in
+            if let error = error {
+                // An error happened.
+                ProgressHUD.showError(error.localizedDescription)
+                return
+            } else {
+                Auth.auth().currentUser?.updatePassword(to: newPassword) { (error) in
+                    if let error = error {
+                        ProgressHUD.showError(error.localizedDescription)
+                    }
+                    else {
+                        completion(true)
+                    }
+                }
+            }
+        }
+    }
+    
     // MARK: - Goole Sign In
     func signInWithGoogle(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error?, completion: @escaping (_ error: Error?) -> Void) {
         
         guard let authentication = user.authentication else { return }
         let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
                                                        accessToken: authentication.accessToken)
+        
         Auth.auth().signIn(with: credential) {[weak self] (result, error) in
             guard let self = self else { return }
             guard let result = result else {
@@ -95,11 +176,14 @@ class FirebaseUserListener {
                 return
             }
             
-            //If id of google account don't exits in User --> return false --> save user to firestore
+            SignInMethod.saveSignInMethod(.google)
+            SignInMethod.saveIdAndAccessToken(id: authentication.idToken, access: authentication.accessToken)
+            
             self.isGoogleAccountAlreadyExits(uid: uid) { (user) in
                 if let user = user {
                     saveUserLocally(user)
                 }
+                //If id of google account don't exits in User --> return false --> save user to firestore
                 else {
                     let user = User(id: uid, username: username, email: email, status: "Available", phoneNumber: result.user.phoneNumber ?? "", avatarLink: "")
                     saveUserLocally(user)
@@ -207,24 +291,24 @@ class FirebaseUserListener {
             }
             completion(users)
         }
-//        FirebaseReference(.User).getDocuments{ (snapshot, error) in
-//            var users : [User] = []
-//            guard let document = snapshot?.documents else {
-//                print("No document in all Users")
-//                return
-//            }
-//            //Decode [QueryDocumentSnapshot] -> [User]
-//            let allUsers = document.compactMap { (queryDocumentSnapshot) -> User? in
-//                return try? queryDocumentSnapshot.data(as: User.self)
-//            }
-//            for user in allUsers {
-//                //Don't want append current user
-//                if User.currentId != user.id {
-//                    users.append(user)
-//                }
-//            }
-//            completion(users)
-//        }
+        //        FirebaseReference(.User).getDocuments{ (snapshot, error) in
+        //            var users : [User] = []
+        //            guard let document = snapshot?.documents else {
+        //                print("No document in all Users")
+        //                return
+        //            }
+        //            //Decode [QueryDocumentSnapshot] -> [User]
+        //            let allUsers = document.compactMap { (queryDocumentSnapshot) -> User? in
+        //                return try? queryDocumentSnapshot.data(as: User.self)
+        //            }
+        //            for user in allUsers {
+        //                //Don't want append current user
+        //                if User.currentId != user.id {
+        //                    users.append(user)
+        //                }
+        //            }
+        //            completion(users)
+        //        }
     }
     
     // MARK: - Download Image
